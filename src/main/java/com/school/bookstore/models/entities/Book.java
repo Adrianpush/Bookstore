@@ -18,6 +18,8 @@ public class Book {
     @Column
     String author;
     @Column
+    int yearPublished;
+    @Column
     String description;
     @Column
     String genre;

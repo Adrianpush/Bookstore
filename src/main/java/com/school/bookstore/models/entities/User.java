@@ -3,7 +3,7 @@ package com.school.bookstore.models.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
@@ -24,6 +24,5 @@ public class User {
             name = "favorite_books",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "book_id"))
-    List<Book> favoriteBooks;
-
+    Set<Book> favoriteBooks;
 }

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Validated
-@RequestMapping("/api/books")
+@RequestMapping("/api/users")
 public class UserController {
 
     UserService userService;
@@ -22,7 +22,7 @@ public class UserController {
         return ResponseEntity.ok(userService.createUser(userDTO));
     }
 
-    @GetMapping
+    @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUserByID(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUserById(id));
     }
@@ -32,8 +32,14 @@ public class UserController {
         return ResponseEntity.ok(userService.updateUser(userDTO));
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
         return ResponseEntity.ok("User with id ".concat(userService.deleteUser(id).toString().concat(" was deleted.")));
+    }
+
+    @PostMapping("/filter")
+    public ResponseEntity<String> addBookToFavorites(@RequestParam Long userId, @RequestParam Long bookId) {
+        userService.addToFavorites(userId, bookId);
+        return ResponseEntity.ok("Book with id " + userId + " added to favorite list of user with id " + userId);
     }
 }

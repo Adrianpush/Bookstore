@@ -11,6 +11,8 @@ public class BookDTO {
     String title;
     @NotEmpty
     String author;
+    @NotEmpty
+    int yearPublished;
     String description;
     String genre;
     int numPages;

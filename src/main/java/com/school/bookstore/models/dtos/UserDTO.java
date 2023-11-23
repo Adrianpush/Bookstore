@@ -11,5 +11,6 @@ public class UserDTO {
     String firstName;
     @NotEmpty
     String lastName;
+    @NotEmpty
     String eMail;
 }
