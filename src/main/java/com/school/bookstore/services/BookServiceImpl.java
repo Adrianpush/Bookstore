@@ -1,106 +1,109 @@
 package com.school.bookstore.services;
 
 import com.school.bookstore.exceptions.BookCreateException;
-import com.school.bookstore.exceptions.BookNotFoundException;
-import com.school.bookstore.exceptions.UserNotFoundException;
+import com.school.bookstore.models.dtos.AuthorDTO;
 import com.school.bookstore.models.dtos.BookDTO;
+import com.school.bookstore.models.dtos.GenreTagDTO;
+import com.school.bookstore.models.entities.Author;
 import com.school.bookstore.models.entities.Book;
-import com.school.bookstore.models.entities.User;
+import com.school.bookstore.models.entities.GenreTag;
+import com.school.bookstore.repositories.AuthorRepository;
 import com.school.bookstore.repositories.BookRepository;
-import com.school.bookstore.repositories.UserRepository;
+import com.school.bookstore.repositories.GenreTagRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
 
 @Service
 public class BookServiceImpl implements BookService {
 
-    private final BookRepository bookRepository;
-    private final UserRepository userRepository;
+    BookRepository bookRepository;
+    AuthorRepository authorRepository;
+    GenreTagRepository genreTagRepository;
+    AuthorService authorService;
+    GenreTagService genreTagService;
 
-    public BookServiceImpl(BookRepository bookRepository, UserRepository userRepository) {
+    public BookServiceImpl(BookRepository bookRepository, AuthorRepository authorRepository, GenreTagRepository genreTagRepository, AuthorService authorService, GenreTagService genreTagService) {
         this.bookRepository = bookRepository;
-        this.userRepository = userRepository;
+        this.authorRepository = authorRepository;
+        this.genreTagRepository = genreTagRepository;
+        this.authorService = authorService;
+        this.genreTagService = genreTagService;
     }
 
     @Override
     public BookDTO createBook(BookDTO bookDTO) {
-        Book book = bookRepository.findByTitleAndByAuthor(bookDTO.getTitle(), bookDTO.getAuthor());
-        if (book != null) {
-            throw new BookCreateException("Book already exists");
+        if(isDuplicate(bookDTO)) {
+            throw new BookCreateException("Book already in database.");
         }
-        Book bookEntity = bookRepository.save(convertToBook(bookDTO));
-        return convertToBookDTO(bookEntity);
+        Book book = bookRepository.save(convertToBookEntity(bookDTO));
+        return convertToBookDTO(book);
     }
 
-    @Override
-    public BookDTO getBookById(Long id) {
-        return convertToBookDTO(
-                bookRepository.findById(id)
-                        .orElseThrow(() -> new BookNotFoundException("Cannot find book with id " + id)));
-    }
+    private Book convertToBookEntity(BookDTO bookDTO) {
+        Book book = new Book();
+        book.setTitle(bookDTO.getTitle());
 
-    @Override
-    public BookDTO updateBook(BookDTO bookDTO) {
+        List<Author> authors = new ArrayList<>();
+        bookDTO.getAuthorNameList().forEach(
+                authorName -> {
+                    Optional<Author> author = authorRepository.findByFullName(authorName);
+                    if (author.isPresent()) {
+                        authors.add(author.get());
+                    } else {
+                        AuthorDTO authorDTO = authorService.createAuthor(authorName);
+                        Author newAuthor = authorRepository.findById(authorDTO.getId()).get();
+                        authors.add(newAuthor);
+                    }
+                }
+        );
+        book.setAuthors(authors);
+        book.setPublisher(bookDTO.getPublisher());
 
-        Book previousBookEntity = bookRepository.findById(bookDTO.getId())
-                .orElseThrow(() -> new BookNotFoundException("Cannot find book with id " + bookDTO.getId()));
-        previousBookEntity.setTitle(bookDTO.getTitle());
-        previousBookEntity.setAuthor(bookDTO.getAuthor());
-        previousBookEntity.setDescription(bookDTO.getDescription());
-        previousBookEntity.setYearPublished(bookDTO.getYearPublished());
-        previousBookEntity.setNumPages(bookDTO.getNumPages());
-        previousBookEntity.setGenre(bookDTO.getGenre());
-        Book updatedBookEntity = bookRepository.save(previousBookEntity);
-        return convertToBookDTO(updatedBookEntity);
-    }
+        Set<GenreTag> genreTagSet = new HashSet<>();
+        bookDTO.getGenreTagList().forEach(
+                genreName -> {
+                    Optional<GenreTag> genreTag = genreTagRepository.findByGenre(genreName);
+                    if(genreTag.isPresent()) {
+                        genreTagSet.add(genreTag.get());
+                    } else {
+                        GenreTagDTO genreTagDTO = genreTagService.createGenreTag(genreName);
+                        genreTagSet.add(genreTagRepository.findById(genreTagDTO.getId()).get());
+                    }
+                }
+        );
+        book.setGenreTagSet(genreTagSet);
 
-    @Override
-    public Long deleteBook(Long id) {
-        if (bookRepository.existsById(id)) {
-            bookRepository.deleteById(id);
-        } else {
-            throw new BookNotFoundException("Book with id " + id + " not found");
-        }
-        return id;
-    }
+        book.setYearPublished(bookDTO.getYearPublished());
+        book.setDescription(bookDTO.getDescription());
+        book.setLanguage(bookDTO.getLanguage());
+        book.setNumPages(bookDTO.getNumPages());
+        book.setPriceBeforeDiscount(bookDTO.getPriceBeforeDiscount());
+        book.setDiscountPercent(bookDTO.getDiscountPercent());
+        book.setCopiesAvailable(bookDTO.getCopiesAvailable());
 
-    @Override
-    public List<BookDTO> getFilteredBooks(String title, String author, int yearPublished) {
-        return bookRepository.findAllByTitleAndAuthorAndYearPublished(title, author, yearPublished)
-                .stream().map(this::convertToBookDTO).toList();
-    }
-
-    @Override
-    public List<BookDTO> getBooksFavoritedByUser(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
-
-        return bookRepository.findFavoritedBooksByUserId(user.getId())
-                .stream().map(this::convertToBookDTO)
-                .toList();
+        return book;
     }
 
     private BookDTO convertToBookDTO(Book book) {
         BookDTO bookDTO = new BookDTO();
         bookDTO.setId(book.getId());
         bookDTO.setTitle(book.getTitle());
-        bookDTO.setAuthor(book.getAuthor());
-        bookDTO.setDescription(book.getDescription());
+        bookDTO.setAuthorNameList(book.getAuthors().stream().map(Author::getFullName).toList());
+        bookDTO.setGenreTagList(book.getGenreTagSet().stream().map(GenreTag::getGenre).toList());
+        bookDTO.setPublisher(book.getPublisher());
         bookDTO.setYearPublished(book.getYearPublished());
-        bookDTO.setGenre(book.getGenre());
+        bookDTO.setDescription(book.getDescription());
+        bookDTO.setLanguage(book.getLanguage());
         bookDTO.setNumPages(book.getNumPages());
+        bookDTO.setPriceBeforeDiscount(book.getPriceBeforeDiscount());
+        bookDTO.setDiscountPercent(book.getDiscountPercent());
+        bookDTO.setCopiesAvailable(book.getCopiesAvailable());
+
         return bookDTO;
     }
 
-    private Book convertToBook(BookDTO bookDTO) {
-        Book book = new Book();
-        book.setTitle(bookDTO.getTitle());
-        book.setAuthor(bookDTO.getAuthor());
-        book.setDescription(bookDTO.getDescription());
-        book.setYearPublished(bookDTO.getYearPublished());
-        book.setGenre(bookDTO.getGenre());
-        book.setNumPages(bookDTO.getNumPages());
-        return book;
+    private boolean isDuplicate(BookDTO bookDTO) {
+        return !bookRepository.findByTitleAndPublisher(bookDTO.getTitle(), bookDTO.getPublisher()).isEmpty();
     }
 }
