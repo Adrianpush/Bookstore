@@ -3,6 +3,7 @@ package com.school.bookstore.services;
 import com.school.bookstore.exceptions.BookCreateException;
 import com.school.bookstore.models.dtos.AuthorDTO;
 import com.school.bookstore.models.dtos.BookDTO;
+import com.school.bookstore.models.dtos.FilterParamsDTO;
 import com.school.bookstore.models.dtos.GenreTagDTO;
 import com.school.bookstore.models.entities.Author;
 import com.school.bookstore.models.entities.Book;
@@ -38,6 +39,19 @@ public class BookServiceImpl implements BookService {
         }
         Book book = bookRepository.save(convertToBookEntity(bookDTO));
         return convertToBookDTO(book);
+    }
+
+    @Override
+    public List<BookDTO> getFilteredBooks(String title, String authorName, String genre, String language, String publisher) {
+
+        return null;
+    }
+
+    @Override
+    public List<BookDTO> getFilteredBooks(FilterParamsDTO filterParamsDTO) {
+        GenreTag genreTag = genreTagRepository.findByGenre(filterParamsDTO.getGenre()).orElse(null);
+
+        return null;
     }
 
     private Book convertToBookEntity(BookDTO bookDTO) {
