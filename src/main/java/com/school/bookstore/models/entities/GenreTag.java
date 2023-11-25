@@ -12,7 +12,7 @@ public class GenreTag {
 
     @Id
     @GeneratedValue
-    Long id;
+    private Long id;
     @Column(name = "genre")
-    String genre;
+    private String genre;
 }

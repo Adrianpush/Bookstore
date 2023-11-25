@@ -14,21 +14,21 @@ import java.util.List;
 @Data
 public class BookDTO {
 
-    Long id;
+    private Long id;
     @NotBlank
-    String title;
-    List<String> authorNameList;
-    List<String> genreTagList;
+    private String title;
+    private List<String> authorNameList;
+    private List<String> genreTagList;
     @NotBlank
-    String publisher;
-    int yearPublished;
-    String description;
-    Language language;
-    int numPages;
+    private String publisher;
+    private int yearPublished;
+    private String description;
+    private Language language;
+    private int numPages;
     @Min(0)
-    double priceBeforeDiscount;
+    private double priceBeforeDiscount;
     @Min(0) @Max(99)
-    int discountPercent;
+    private int discountPercent;
     @Min(0)
-    int copiesAvailable;
+    private int copiesAvailable;
 }

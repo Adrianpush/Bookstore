@@ -3,18 +3,18 @@ package com.school.bookstore.models.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.List;
-
-@Entity
-@Table(name = "authors")
 @Data
-public class Author {
+@Table(name = "staff")
+@Entity
+public class StaffMember {
 
     @Id
     @GeneratedValue
     private Long id;
     @Column(name = "full_name")
     private String fullName;
-    @Column(name = "author_information")
-    private String authorInformation;
+    @Column(name = "username")
+    private String username;
+    @Column(name = "password")
+    private String password;
 }

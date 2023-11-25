@@ -5,9 +5,9 @@ import lombok.Data;
 @Data
 public class FilterParamsDTO {
 
-    String title;
-    String author;
-    String genre;
-    String language;
-    String publisher;
+    private String title;
+    private String author;
+    private String genre;
+    private String language;
+    private String publisher;
 }

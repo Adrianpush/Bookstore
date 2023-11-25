@@ -2,12 +2,15 @@ package com.school.bookstore.models.dtos;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-import org.springframework.stereotype.Repository;
 
 @Data
-public class AuthorDTO {
+public class StaffMemberDTO {
 
     private Long id;
+    @NotBlank
     private String fullName;
-    private String AuthorInformation;
+    @NotBlank
+    private String username;
+    @NotBlank
+    private String password;
 }
