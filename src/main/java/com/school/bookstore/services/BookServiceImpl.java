@@ -50,8 +50,12 @@ public class BookServiceImpl implements BookService {
     @Override
     public List<BookDTO> getFilteredBooks(FilterParamsDTO filterParamsDTO) {
         GenreTag genreTag = genreTagRepository.findByGenre(filterParamsDTO.getGenre()).orElse(null);
-
         return null;
+    }
+
+    @Override
+    public List<BookDTO> getAllBooks() {
+        return bookRepository.findAll().stream().map(this::convertToBookDTO).toList();
     }
 
     private Book convertToBookEntity(BookDTO bookDTO) {

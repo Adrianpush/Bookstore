@@ -10,4 +10,6 @@ public interface BookService {
     BookDTO createBook(BookDTO bookDTO);
     List<BookDTO> getFilteredBooks(String title, String authorName, String genre, String language, String publisher);
     List<BookDTO> getFilteredBooks(FilterParamsDTO filterParamsDTO);
+
+    List<BookDTO> getAllBooks();
 }

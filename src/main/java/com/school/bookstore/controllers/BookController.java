@@ -32,4 +32,9 @@ public class BookController {
                                                           @RequestParam String publisher) {
         return ResponseEntity.ok(bookService.getFilteredBooks(title, authorName, genre, language, publisher));
     }
+
+    @GetMapping()
+    public ResponseEntity<List<BookDTO>> getAllBooks() {
+        return ResponseEntity.ok(bookService.getAllBooks());
+    }
 }
