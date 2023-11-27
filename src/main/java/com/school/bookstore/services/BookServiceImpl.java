@@ -1,9 +1,9 @@
 package com.school.bookstore.services;
 
 import com.school.bookstore.exceptions.BookCreateException;
+import com.school.bookstore.exceptions.BookNotFoundException;
 import com.school.bookstore.models.dtos.AuthorDTO;
 import com.school.bookstore.models.dtos.BookDTO;
-import com.school.bookstore.models.dtos.FilterParamsDTO;
 import com.school.bookstore.models.dtos.GenreTagDTO;
 import com.school.bookstore.models.entities.Author;
 import com.school.bookstore.models.entities.Book;
@@ -25,6 +25,7 @@ public class BookServiceImpl implements BookService {
     private final AuthorService authorService;
     private final GenreTagService genreTagService;
     private final ImageUploadService imageUploadService;
+    private final String defaultImageLink;
 
     public BookServiceImpl(BookRepository bookRepository, AuthorRepository authorRepository, GenreTagRepository genreTagRepository, AuthorService authorService, GenreTagService genreTagService, ImageUploadService imageUploadService) {
         this.bookRepository = bookRepository;
@@ -33,36 +34,69 @@ public class BookServiceImpl implements BookService {
         this.authorService = authorService;
         this.genreTagService = genreTagService;
         this.imageUploadService = imageUploadService;
+        this.defaultImageLink = "https://dkckcusqogzbwetnizwe.supabase.co/storage/v1/object/public/books/default-book-cover.jpg";
     }
 
     @Override
-    public BookDTO createBook(BookDTO bookDTO, MultipartFile multipartFile) {
+    public BookDTO createBook(BookDTO bookDTO) {
         if(isDuplicate(bookDTO)) {
             throw new BookCreateException("Book already in database.");
         }
-        if (multipartFile != null) {
-            String imageLink = imageUploadService.uploadImage(multipartFile, String.valueOf(bookDTO.getTitle().concat(bookDTO.getPublisher()).hashCode()));
-            bookDTO.setImageLink(imageLink);
-        }
+        bookDTO.setImageLink(defaultImageLink);
         Book book = bookRepository.save(convertToBookEntity(bookDTO));
         return convertToBookDTO(book);
     }
 
     @Override
-    public List<BookDTO> getFilteredBooks(String title, String authorName, String genre, String language, String publisher) {
-
-        return null;
-    }
-
-    @Override
-    public List<BookDTO> getFilteredBooks(FilterParamsDTO filterParamsDTO) {
-        GenreTag genreTag = genreTagRepository.findByGenre(filterParamsDTO.getGenre()).orElse(null);
-        return null;
+    public BookDTO getBookById(Long bookId) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new BookNotFoundException("Book with id " + bookId + " not in database."));
+        return convertToBookDTO(book);
     }
 
     @Override
     public List<BookDTO> getAllBooks() {
         return bookRepository.findAll().stream().map(this::convertToBookDTO).toList();
+    }
+
+    @Override
+    public List<BookDTO> getFilteredBooks(String title, String authorName, String genre, String language, String publisher) {
+        return bookRepository.findAll().stream().map(this::convertToBookDTO).toList();
+    }
+
+    @Override
+    public BookDTO updateBook(BookDTO bookDTO) {
+        if(!isDuplicate(bookDTO)) {
+            throw new BookCreateException("Book already in database.");
+        }
+
+        if (bookRepository.existsById(bookDTO.getId())) {
+            Book bookEntity = bookRepository.save(convertToBookEntity(bookDTO));
+            return convertToBookDTO(bookEntity);
+        }
+
+        throw new BookNotFoundException("Book with id " + bookDTO.getId() + " not in database.");
+    }
+
+    @Override
+    public void deleteBookById(Long bookId) {
+        if (bookRepository.existsById(bookId)) {
+            bookRepository.deleteById(bookId);
+        } else {
+            throw new BookNotFoundException("Book with id " + bookId + " not in database.");
+        }
+    }
+
+    @Override
+    public BookDTO addBookCoverImage(Long bookId, MultipartFile file) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new BookNotFoundException("Book with id " + bookId + " not in database."));
+        String fileName = bookId.toString();
+        String imageLink = imageUploadService.uploadImage(file, fileName);
+        book.setImageLink(imageLink);
+        Book updatedBook  = bookRepository.save(book);
+
+        return convertToBookDTO(updatedBook);
     }
 
     private Book convertToBookEntity(BookDTO bookDTO) {
@@ -106,7 +140,6 @@ public class BookServiceImpl implements BookService {
         book.setPriceBeforeDiscount(bookDTO.getPriceBeforeDiscount());
         book.setDiscountPercent(bookDTO.getDiscountPercent());
         book.setCopiesAvailable(bookDTO.getCopiesAvailable());
-        book.setImageLink(bookDTO.getImageLink());
 
         return book;
     }
