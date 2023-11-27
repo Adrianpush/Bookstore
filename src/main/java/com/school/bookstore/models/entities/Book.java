@@ -57,4 +57,7 @@ public class Book {
 
     @Column(name = "copies_available")
     private int copiesAvailable;
+
+    @Column(name = "image_link")
+    private String imageLink;
 }

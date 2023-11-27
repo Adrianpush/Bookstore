@@ -13,8 +13,8 @@ import java.util.List;
 @Service
 public class StaffServiceImpl implements StaffService {
 
-    StaffRepository staffRepository;
-    ObjectMapper objectMapper;
+    private final StaffRepository staffRepository;
+    private final ObjectMapper objectMapper;
 
     public StaffServiceImpl(StaffRepository staffRepository, ObjectMapper objectMapper) {
         this.staffRepository = staffRepository;

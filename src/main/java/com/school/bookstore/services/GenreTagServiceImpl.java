@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class GenreTagServiceImpl implements GenreTagService {
 
-    GenreTagRepository genreTagRepository;
+    private final GenreTagRepository genreTagRepository;
 
     public GenreTagServiceImpl(GenreTagRepository genreTagRepository) {
         this.genreTagRepository = genreTagRepository;

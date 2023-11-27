@@ -1,12 +1,13 @@
 package com.school.bookstore.controllers;
 
 import com.school.bookstore.models.dtos.BookDTO;
-import com.school.bookstore.models.entities.Book;
 import com.school.bookstore.services.BookService;
+import com.school.bookstore.services.ImageUploadService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -16,14 +17,15 @@ import java.util.List;
 @RequestMapping("/api/books")
 public class BookController {
 
-    BookService bookService;
+    private final BookService bookService;
 
-    public BookController(BookService bookService) {
+
+    public BookController(BookService bookService, ImageUploadService imageUploadService) {
         this.bookService = bookService;
     }
     @PostMapping
-    public ResponseEntity<BookDTO> createBook(@RequestBody @Valid BookDTO bookDTO) {
-        return ResponseEntity.ok(bookService.createBook(bookDTO));
+    public ResponseEntity<BookDTO> createBook(@RequestPart("bookDTO") @Valid BookDTO bookDTO, @RequestPart("imageJpg") MultipartFile multipartFile) {
+        return ResponseEntity.ok(bookService.createBook(bookDTO, multipartFile));
     }
 
     @GetMapping("filtered/")

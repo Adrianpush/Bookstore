@@ -12,30 +12,37 @@ import com.school.bookstore.repositories.AuthorRepository;
 import com.school.bookstore.repositories.BookRepository;
 import com.school.bookstore.repositories.GenreTagRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
 @Service
 public class BookServiceImpl implements BookService {
 
-    BookRepository bookRepository;
-    AuthorRepository authorRepository;
-    GenreTagRepository genreTagRepository;
-    AuthorService authorService;
-    GenreTagService genreTagService;
+    private final BookRepository bookRepository;
+    private final AuthorRepository authorRepository;
+    private final GenreTagRepository genreTagRepository;
+    private final AuthorService authorService;
+    private final GenreTagService genreTagService;
+    private final ImageUploadService imageUploadService;
 
-    public BookServiceImpl(BookRepository bookRepository, AuthorRepository authorRepository, GenreTagRepository genreTagRepository, AuthorService authorService, GenreTagService genreTagService) {
+    public BookServiceImpl(BookRepository bookRepository, AuthorRepository authorRepository, GenreTagRepository genreTagRepository, AuthorService authorService, GenreTagService genreTagService, ImageUploadService imageUploadService) {
         this.bookRepository = bookRepository;
         this.authorRepository = authorRepository;
         this.genreTagRepository = genreTagRepository;
         this.authorService = authorService;
         this.genreTagService = genreTagService;
+        this.imageUploadService = imageUploadService;
     }
 
     @Override
-    public BookDTO createBook(BookDTO bookDTO) {
+    public BookDTO createBook(BookDTO bookDTO, MultipartFile multipartFile) {
         if(isDuplicate(bookDTO)) {
             throw new BookCreateException("Book already in database.");
+        }
+        if (multipartFile != null) {
+            String imageLink = imageUploadService.uploadImage(multipartFile, String.valueOf(bookDTO.getTitle().concat(bookDTO.getPublisher()).hashCode()));
+            bookDTO.setImageLink(imageLink);
         }
         Book book = bookRepository.save(convertToBookEntity(bookDTO));
         return convertToBookDTO(book);
@@ -99,6 +106,7 @@ public class BookServiceImpl implements BookService {
         book.setPriceBeforeDiscount(bookDTO.getPriceBeforeDiscount());
         book.setDiscountPercent(bookDTO.getDiscountPercent());
         book.setCopiesAvailable(bookDTO.getCopiesAvailable());
+        book.setImageLink(bookDTO.getImageLink());
 
         return book;
     }
@@ -117,6 +125,7 @@ public class BookServiceImpl implements BookService {
         bookDTO.setPriceBeforeDiscount(book.getPriceBeforeDiscount());
         bookDTO.setDiscountPercent(book.getDiscountPercent());
         bookDTO.setCopiesAvailable(book.getCopiesAvailable());
+        bookDTO.setImageLink(book.getImageLink());
 
         return bookDTO;
     }

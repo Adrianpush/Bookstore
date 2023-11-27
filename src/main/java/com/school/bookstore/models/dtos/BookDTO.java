@@ -1,12 +1,9 @@
 package com.school.bookstore.models.dtos;
 
-import com.school.bookstore.models.entities.Author;
 import com.school.bookstore.models.entities.Language;
-import jakarta.persistence.ManyToMany;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
 import java.util.List;
@@ -31,4 +28,5 @@ public class BookDTO {
     private int discountPercent;
     @Min(0)
     private int copiesAvailable;
+    private String imageLink;
 }
