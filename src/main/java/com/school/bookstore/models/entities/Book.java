@@ -1,11 +1,12 @@
 package com.school.bookstore.models.entities;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 
-import java.util.List;
 import java.util.Set;
 
+@Builder
 @Data
 @Entity
 @Table(name = "books")
@@ -23,7 +24,7 @@ public class Book {
             name = "books_authors",
             joinColumns = @JoinColumn(name = "book_id"),
             inverseJoinColumns = @JoinColumn(name = "author_id"))
-    private List<Author> authors;
+    private Set<Author> authors;
 
     @Column(name = "publisher")
     private String publisher;

@@ -1,10 +1,11 @@
 package com.school.bookstore.services;
 
-import com.school.bookstore.models.dtos.AuthorDTO;
 import com.school.bookstore.models.entities.Author;
 
-public interface AuthorService {
+import java.util.Optional;
 
-    AuthorDTO createAuthor(AuthorDTO authorDTO);
-    AuthorDTO createAuthor(String authorFullName);
+public interface AuthorService {
+    Author createAuthor(String authorFullName);
+    Optional<Author> getAuthorByName(String authorFullName);
+
 }

@@ -61,7 +61,7 @@ public class BookController {
     @PatchMapping("/{bookId}/cover")
     public ResponseEntity<BookDTO> addBookCoverImage(@PathVariable Long bookId, @RequestBody MultipartFile file) {
         if(file.isEmpty()) {
-            throw new RuntimeException("file null");
+            ResponseEntity.badRequest();
         }
         return ResponseEntity.ok(bookService.changeBookCoverImage(bookId, file));
     }
