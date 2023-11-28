@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -34,7 +35,7 @@ public class ImageUploadServiceImpl implements ImageUploadService {
             requestBody = new MultipartBody.Builder()
                     .setType(MultipartBody.FORM)
                     .addFormDataPart("file", fileName,
-                            RequestBody.create(MediaType.parse(multipartFile.getContentType()), multipartFile.getBytes()))
+                            RequestBody.create(MediaType.parse(Objects.requireNonNull(multipartFile.getContentType())), multipartFile.getBytes()))
                     .build();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -44,6 +45,33 @@ public class ImageUploadServiceImpl implements ImageUploadService {
                 .url(String.format("https://%s.supabase.co/storage/v1/object/%s/%s", projectId, bucketName, fileName))
                 .addHeader("Authorization", "Bearer " + apiKey)
                 .post(requestBody)
+                .build();
+        log.info("sending request");
+        try (Response response = client.newCall(request).execute()) {
+            log.info("request successful");
+            return imageBaseUrl.concat(fileName);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public String updateImage(MultipartFile multipartFile, String fileName) {
+        RequestBody requestBody = null;
+        try {
+            requestBody = new MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("file", fileName,
+                            RequestBody.create(MediaType.parse(Objects.requireNonNull(multipartFile.getContentType())), multipartFile.getBytes()))
+                    .build();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        Request request = new Request.Builder()
+                .url(String.format("https://%s.supabase.co/storage/v1/object/%s/%s", projectId, bucketName, fileName))
+                .addHeader("Authorization", "Bearer " + apiKey)
+                .put(requestBody)
                 .build();
         log.info("sending request");
         try (Response response = client.newCall(request).execute()) {

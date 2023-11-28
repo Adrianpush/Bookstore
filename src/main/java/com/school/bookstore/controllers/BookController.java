@@ -47,9 +47,9 @@ public class BookController {
         return ResponseEntity.ok(bookService.getFilteredBooks(title, authorName, genre, language, publisher));
     }
 
-    @PutMapping
-    public ResponseEntity<BookDTO> updateBook(@Valid BookDTO bookDTO) {
-        return ResponseEntity.ok(bookService.updateBook(bookDTO));
+    @PutMapping("/{id}")
+    public ResponseEntity<BookDTO> updateBook(@PathVariable Long bookId, @RequestBody @Valid BookDTO bookDTO) {
+        return ResponseEntity.ok(bookService.updateBook(bookId, bookDTO));
     }
 
     @DeleteMapping("/{id}")
@@ -59,7 +59,10 @@ public class BookController {
     }
 
     @PatchMapping("/{id}/cover")
-    public ResponseEntity<BookDTO> addBookCoverImage(@PathVariable Long bookId, @RequestParam("file") MultipartFile file) {
-        return ResponseEntity.ok(bookService.addBookCoverImage(bookId, file));
+    public ResponseEntity<BookDTO> addBookCoverImage(@PathVariable Long id, @RequestBody MultipartFile file) {
+        if(file.isEmpty()) {
+            throw new RuntimeException("file null");
+        }
+        return ResponseEntity.ok(bookService.changeBookCoverImage(id, file));
     }
 }

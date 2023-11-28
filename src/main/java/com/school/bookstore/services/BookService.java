@@ -15,9 +15,9 @@ public interface BookService {
 
     List<BookDTO> getFilteredBooks(String title, String authorName, String genre, String language, String publisher);
 
-    BookDTO updateBook(BookDTO bookDTO);
+    BookDTO updateBook(Long bookId, BookDTO bookDTO);
 
-    BookDTO addBookCoverImage(Long bookId, MultipartFile file);
+    BookDTO changeBookCoverImage(Long bookId, MultipartFile file);
 
 
 

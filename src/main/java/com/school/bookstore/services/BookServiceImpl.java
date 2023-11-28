@@ -42,9 +42,10 @@ public class BookServiceImpl implements BookService {
         if(isDuplicate(bookDTO)) {
             throw new BookCreateException("Book already in database.");
         }
-        bookDTO.setImageLink(defaultImageLink);
-        Book book = bookRepository.save(convertToBookEntity(bookDTO));
-        return convertToBookDTO(book);
+        Book book = convertToBookEntity(bookDTO);
+        book.setImageLink(defaultImageLink);
+        Book bookEntity = bookRepository.save(book);
+        return convertToBookDTO(bookEntity);
     }
 
     @Override
@@ -65,17 +66,17 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookDTO updateBook(BookDTO bookDTO) {
+    public BookDTO updateBook(Long bookId, BookDTO bookDTO) {
         if(!isDuplicate(bookDTO)) {
             throw new BookCreateException("Book already in database.");
         }
 
-        if (bookRepository.existsById(bookDTO.getId())) {
+        if (bookRepository.existsById(bookId)) {
             Book bookEntity = bookRepository.save(convertToBookEntity(bookDTO));
             return convertToBookDTO(bookEntity);
         }
 
-        throw new BookNotFoundException("Book with id " + bookDTO.getId() + " not in database.");
+        throw new BookNotFoundException("Book with id " + bookId + " not in database.");
     }
 
     @Override
@@ -88,11 +89,16 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookDTO addBookCoverImage(Long bookId, MultipartFile file) {
+    public BookDTO changeBookCoverImage(Long bookId, MultipartFile file) {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new BookNotFoundException("Book with id " + bookId + " not in database."));
-        String fileName = bookId.toString();
-        String imageLink = imageUploadService.uploadImage(file, fileName);
+
+        String imageLink = "";
+        if (book.getImageLink().equals(defaultImageLink)) {
+            imageLink = imageUploadService.uploadImage(file, bookId.toString());
+        } else {
+            imageLink = imageUploadService.updateImage(file, bookId.toString());
+        }
         book.setImageLink(imageLink);
         Book updatedBook  = bookRepository.save(book);
 
