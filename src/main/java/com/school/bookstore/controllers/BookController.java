@@ -30,9 +30,9 @@ public class BookController {
         return ResponseEntity.ok(bookService.createBook(bookDTO));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<BookDTO> getBookById(Long id) {
-        return ResponseEntity.ok(bookService.getBookById(id));
+    @GetMapping("/{bookId}")
+    public ResponseEntity<BookDTO> getBookById(@PathVariable Long bookId) {
+        return ResponseEntity.ok(bookService.getBookById(bookId));
     }
 
     @GetMapping
@@ -47,22 +47,22 @@ public class BookController {
         return ResponseEntity.ok(bookService.getFilteredBooks(title, authorName, genre, language, publisher));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<BookDTO> updateBook(@PathVariable Long id, @RequestBody @Valid BookDTO bookDTO) {
-        return ResponseEntity.ok(bookService.updateBook(id, bookDTO));
+    @PutMapping("/{bookId}")
+    public ResponseEntity<BookDTO> updateBook(@PathVariable Long bookId, @RequestBody @Valid BookDTO bookDTO) {
+        return ResponseEntity.ok(bookService.updateBook(bookId, bookDTO));
     }
 
-    @DeleteMapping("/{id}")
-    public HttpStatus deleteBook(Long id) {
+    @DeleteMapping("/{bookId}")
+    public HttpStatus deleteBook(@PathVariable Long id) {
         bookService.deleteBookById(id);
         return HttpStatus.NO_CONTENT;
     }
 
-    @PatchMapping("/{id}/cover")
-    public ResponseEntity<BookDTO> addBookCoverImage(@PathVariable Long id, @RequestBody MultipartFile file) {
+    @PatchMapping("/{bookId}/cover")
+    public ResponseEntity<BookDTO> addBookCoverImage(@PathVariable Long bookId, @RequestBody MultipartFile file) {
         if(file.isEmpty()) {
             throw new RuntimeException("file null");
         }
-        return ResponseEntity.ok(bookService.changeBookCoverImage(id, file));
+        return ResponseEntity.ok(bookService.changeBookCoverImage(bookId, file));
     }
 }
