@@ -105,7 +105,6 @@ public class BookServiceImpl implements BookService {
     private Book convertToBookEntity(BookDTO bookDTO) {
 
         Set<Author> authors = getAuthors(bookDTO.getAuthorNameList());
-
         Set<GenreTag> genreTagSet = getGenreTags(bookDTO.getGenreTagList());
 
         return Book.builder()
@@ -124,32 +123,38 @@ public class BookServiceImpl implements BookService {
     @NotNull
     private Set<Author> getAuthors(List<String> authorNames) {
         Set<Author> authors = new HashSet<>();
-        authorNames.forEach(
-                authorName -> {
-                    Optional<Author> author = authorService.getAuthorByName(authorName);
-                    if (author.isPresent()) {
-                        authors.add(author.get());
-                    } else {
-                        authors.add(authorService.createAuthor(authorName));
+        if (authorNames != null) {
+            authorNames.forEach(
+                    authorName -> {
+                        Optional<Author> author = authorService.getAuthorByName(authorName);
+                        if (author.isPresent()) {
+                            authors.add(author.get());
+                        } else {
+                            authors.add(authorService.createAuthor(authorName));
+                        }
                     }
-                }
-        );
+            );
+        }
+
         return authors;
     }
 
     @NotNull
     private Set<GenreTag> getGenreTags(List<String> genreTags) {
         Set<GenreTag> genreTagSet = new HashSet<>();
-        genreTags.forEach(
-                genreName -> {
-                    Optional<GenreTag> genreTag = genreTagService.getGenreTag(genreName);
-                    if (genreTag.isPresent()) {
-                        genreTagSet.add(genreTag.get());
-                    } else {
-                        genreTagSet.add(genreTagService.createGenreTag(genreName));
+        if (genreTags != null) {
+            genreTags.forEach(
+                    genreName -> {
+                        Optional<GenreTag> genreTag = genreTagService.getGenreTag(genreName);
+                        if (genreTag.isPresent()) {
+                            genreTagSet.add(genreTag.get());
+                        } else {
+                            genreTagSet.add(genreTagService.createGenreTag(genreName));
+                        }
                     }
-                }
-        );
+            );
+        }
+
         return genreTagSet;
     }
 

@@ -9,7 +9,7 @@ import lombok.Data;
 public class StaffMember {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
     @Column(name = "full_name")
     private String fullName;

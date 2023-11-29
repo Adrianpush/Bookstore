@@ -9,7 +9,7 @@ import lombok.Data;
 public class GenreTag {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
     @Column(name = "genre")
     private String genre;
