@@ -30,7 +30,7 @@ public class BookServiceImpl implements BookService {
         this.authorService = authorService;
         this.genreTagService = genreTagService;
         this.imageUploadService = imageUploadService;
-        this.defaultImageLink = "${image.urlBase}".concat("default-book-cover.jpg");
+        this.defaultImageLink = "https://dkckcusqogzbwetnizwe.supabase.co/storage/v1/object/public/books/".concat("default-book-cover.jpg");
 
     }
 
