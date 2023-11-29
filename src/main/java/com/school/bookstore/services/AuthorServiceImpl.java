@@ -1,9 +1,10 @@
 package com.school.bookstore.services;
 
-import com.school.bookstore.models.dtos.AuthorDTO;
 import com.school.bookstore.models.entities.Author;
 import com.school.bookstore.repositories.AuthorRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class AuthorServiceImpl implements AuthorService {
@@ -15,29 +16,18 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public AuthorDTO createAuthor(AuthorDTO authorDTO) {
+    public Author createAuthor(String authorFullName) {
         Author author = new Author();
-        author.setFullName(authorDTO.getFullName());
-        author.setAuthorInformation(authorDTO.getAuthorInformation());
-        author = authorRepository.save(author);
-        AuthorDTO authorResponseDTO = new AuthorDTO();
-        authorResponseDTO.setId(author.getId());
-        authorResponseDTO.setFullName(author.getFullName());
-        authorResponseDTO.setAuthorInformation(author.getAuthorInformation());
+        author.setFullName(authorFullName);
+        return authorRepository.save(author);
+    }
 
-        return authorResponseDTO;
+    public Author getAuthorEntityById(Long id) {
+        return authorRepository.findById(id).orElseThrow();
     }
 
     @Override
-    public AuthorDTO createAuthor(String authorFullName) {
-        Author author = new Author();
-        author.setFullName(authorFullName);
-        author = authorRepository.save(author);
-        AuthorDTO authorResponseDTO = new AuthorDTO();
-        authorResponseDTO.setId(author.getId());
-        authorResponseDTO.setFullName(author.getFullName());
-        authorResponseDTO.setAuthorInformation(author.getAuthorInformation());
-
-        return authorResponseDTO;
+    public Optional<Author> getAuthorByName(String authorFullName) {
+        return authorRepository.findByFullName(authorFullName);
     }
 }

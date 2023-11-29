@@ -2,44 +2,41 @@ package com.school.bookstore.services;
 
 import com.school.bookstore.exceptions.BookCreateException;
 import com.school.bookstore.exceptions.BookNotFoundException;
-import com.school.bookstore.models.dtos.AuthorDTO;
 import com.school.bookstore.models.dtos.BookDTO;
-import com.school.bookstore.models.dtos.GenreTagDTO;
 import com.school.bookstore.models.entities.Author;
 import com.school.bookstore.models.entities.Book;
 import com.school.bookstore.models.entities.GenreTag;
-import com.school.bookstore.repositories.AuthorRepository;
 import com.school.bookstore.repositories.BookRepository;
-import com.school.bookstore.repositories.GenreTagRepository;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
-    private final AuthorRepository authorRepository;
-    private final GenreTagRepository genreTagRepository;
     private final AuthorService authorService;
     private final GenreTagService genreTagService;
     private final ImageUploadService imageUploadService;
     private final String defaultImageLink;
 
-    public BookServiceImpl(BookRepository bookRepository, AuthorRepository authorRepository, GenreTagRepository genreTagRepository, AuthorService authorService, GenreTagService genreTagService, ImageUploadService imageUploadService) {
+    public BookServiceImpl(BookRepository bookRepository, AuthorService authorService, GenreTagService genreTagService, ImageUploadService imageUploadService) {
         this.bookRepository = bookRepository;
-        this.authorRepository = authorRepository;
-        this.genreTagRepository = genreTagRepository;
         this.authorService = authorService;
         this.genreTagService = genreTagService;
         this.imageUploadService = imageUploadService;
-        this.defaultImageLink = "https://dkckcusqogzbwetnizwe.supabase.co/storage/v1/object/public/books/default-book-cover.jpg";
+        this.defaultImageLink = "${image.urlBase}".concat("default-book-cover.jpg");
+
     }
 
     @Override
     public BookDTO createBook(BookDTO bookDTO) {
-        if(isDuplicate(bookDTO)) {
+        if (isDuplicate(bookDTO)) {
             throw new BookCreateException("Book already in database.");
         }
         Book book = convertToBookEntity(bookDTO);
@@ -67,7 +64,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookDTO updateBook(Long bookId, BookDTO bookDTO) {
-        if(!isDuplicate(bookDTO)) {
+        if (!isDuplicate(bookDTO)) {
             throw new BookCreateException("Book already in database.");
         }
 
@@ -100,54 +97,65 @@ public class BookServiceImpl implements BookService {
             imageLink = imageUploadService.updateImage(file, bookId.toString());
         }
         book.setImageLink(imageLink);
-        Book updatedBook  = bookRepository.save(book);
+        Book updatedBook = bookRepository.save(book);
 
         return convertToBookDTO(updatedBook);
     }
 
     private Book convertToBookEntity(BookDTO bookDTO) {
-        Book book = new Book();
-        book.setTitle(bookDTO.getTitle());
 
-        List<Author> authors = new ArrayList<>();
-        bookDTO.getAuthorNameList().forEach(
-                authorName -> {
-                    Optional<Author> author = authorRepository.findByFullName(authorName);
-                    if (author.isPresent()) {
-                        authors.add(author.get());
-                    } else {
-                        AuthorDTO authorDTO = authorService.createAuthor(authorName);
-                        Author newAuthor = authorRepository.findById(authorDTO.getId()).get();
-                        authors.add(newAuthor);
+        Set<Author> authors = getAuthors(bookDTO.getAuthorNameList());
+        Set<GenreTag> genreTagSet = getGenreTags(bookDTO.getGenreTagList());
+
+        return Book.builder()
+                .title(bookDTO.getTitle())
+                .authors(authors)
+                .publisher(bookDTO.getPublisher())
+                .genreTagSet(genreTagSet)
+                .yearPublished(bookDTO.getYearPublished())
+                .language(bookDTO.getLanguage())
+                .numPages(bookDTO.getNumPages())
+                .discountPercent(bookDTO.getDiscountPercent())
+                .copiesAvailable(bookDTO.getCopiesAvailable())
+                .build();
+    }
+
+    @NotNull
+    private Set<Author> getAuthors(List<String> authorNames) {
+        Set<Author> authors = new HashSet<>();
+        if (authorNames != null) {
+            authorNames.forEach(
+                    authorName -> {
+                        Optional<Author> author = authorService.getAuthorByName(authorName);
+                        if (author.isPresent()) {
+                            authors.add(author.get());
+                        } else {
+                            authors.add(authorService.createAuthor(authorName));
+                        }
                     }
-                }
-        );
-        book.setAuthors(authors);
-        book.setPublisher(bookDTO.getPublisher());
+            );
+        }
 
+        return authors;
+    }
+
+    @NotNull
+    private Set<GenreTag> getGenreTags(List<String> genreTags) {
         Set<GenreTag> genreTagSet = new HashSet<>();
-        bookDTO.getGenreTagList().forEach(
-                genreName -> {
-                    Optional<GenreTag> genreTag = genreTagRepository.findByGenre(genreName);
-                    if(genreTag.isPresent()) {
-                        genreTagSet.add(genreTag.get());
-                    } else {
-                        GenreTagDTO genreTagDTO = genreTagService.createGenreTag(genreName);
-                        genreTagSet.add(genreTagRepository.findById(genreTagDTO.getId()).get());
+        if (genreTags != null) {
+            genreTags.forEach(
+                    genreName -> {
+                        Optional<GenreTag> genreTag = genreTagService.getGenreTag(genreName);
+                        if (genreTag.isPresent()) {
+                            genreTagSet.add(genreTag.get());
+                        } else {
+                            genreTagSet.add(genreTagService.createGenreTag(genreName));
+                        }
                     }
-                }
-        );
-        book.setGenreTagSet(genreTagSet);
+            );
+        }
 
-        book.setYearPublished(bookDTO.getYearPublished());
-        book.setDescription(bookDTO.getDescription());
-        book.setLanguage(bookDTO.getLanguage());
-        book.setNumPages(bookDTO.getNumPages());
-        book.setPriceBeforeDiscount(bookDTO.getPriceBeforeDiscount());
-        book.setDiscountPercent(bookDTO.getDiscountPercent());
-        book.setCopiesAvailable(bookDTO.getCopiesAvailable());
-
-        return book;
+        return genreTagSet;
     }
 
     private BookDTO convertToBookDTO(Book book) {
