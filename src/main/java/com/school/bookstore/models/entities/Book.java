@@ -21,7 +21,7 @@ public class Book {
     @Column(name = "title")
     private String title;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "books_authors",
             joinColumns = @JoinColumn(name = "book_id"),
@@ -31,7 +31,7 @@ public class Book {
     @Column(name = "publisher")
     private String publisher;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "books_tags",
             joinColumns = @JoinColumn(name = "book_id"),
