@@ -31,18 +31,6 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
-    public StaffMemberDTO updateStaffMemberDetails(Long id, StaffMemberDTO staffMemberDTO) {
-        validateStaffMemberDTO(staffMemberDTO);
-        StaffMember staffMemberToBeUpdated = staffRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User not found."));
-        staffMemberToBeUpdated.setUsername(staffMemberDTO.getUsername());
-        staffMemberToBeUpdated.setPassword(staffMemberDTO.getPassword());
-        staffMemberToBeUpdated.setFullName(staffMemberDTO.getFullName());
-
-        return objectMapper.convertValue(staffMemberToBeUpdated, StaffMemberDTO.class);
-    }
-
-    @Override
     public StaffMemberDTO getStaffById(Long id) {
         StaffMember staffMember = staffRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found."));

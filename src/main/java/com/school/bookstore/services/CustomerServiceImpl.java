@@ -7,20 +7,17 @@ import com.school.bookstore.models.entities.Customer;
 import com.school.bookstore.models.entities.Order;
 import com.school.bookstore.models.entities.OrderItem;
 import com.school.bookstore.repositories.CustomerRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository customerRepository;
-
-    public CustomerServiceImpl(CustomerRepository customerRepository) {
-        this.customerRepository = customerRepository;
-    }
-
 
     @Override
     public CustomerDTO createCustomer(CustomerDTO customerDTO) {
@@ -45,14 +42,6 @@ public class CustomerServiceImpl implements CustomerService {
         customerRepository.findAll().forEach(customer -> customerDTOs.add(convertToCustomerDTO(customer)));
 
         return customerDTOs;
-    }
-
-    @Override
-    public CustomerDTO updateCustomer(Long id, CustomerDTO customerDTO) {
-        Customer customer = customerRepository.findById(id)
-                .orElseThrow(() -> new CustomerNotFoundException("Customer with id " + id + " not found"));
-
-        return null;
     }
 
     @Override

@@ -39,9 +39,4 @@ public class StaffController {
     public ResponseEntity<String> deleteStaffMember(@PathVariable Long id) {
         return ResponseEntity.ok(staffService.deleteStaffMemberById(id));
     }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<StaffMemberDTO> updateStaffMemberInfo(@Valid @RequestBody StaffMemberDTO staffMemberDTO, @PathVariable Long id) {
-        return ResponseEntity.ok(staffService.updateStaffMemberDetails(id, staffMemberDTO));
-    }
 }

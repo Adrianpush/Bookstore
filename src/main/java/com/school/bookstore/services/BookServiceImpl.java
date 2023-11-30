@@ -7,6 +7,7 @@ import com.school.bookstore.models.entities.Author;
 import com.school.bookstore.models.entities.Book;
 import com.school.bookstore.models.entities.GenreTag;
 import com.school.bookstore.repositories.BookRepository;
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,22 +18,14 @@ import java.util.Optional;
 import java.util.Set;
 
 @Service
+@RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
     private final AuthorService authorService;
     private final GenreTagService genreTagService;
     private final ImageUploadService imageUploadService;
-    private final String defaultImageLink;
-
-    public BookServiceImpl(BookRepository bookRepository, AuthorService authorService, GenreTagService genreTagService, ImageUploadService imageUploadService) {
-        this.bookRepository = bookRepository;
-        this.authorService = authorService;
-        this.genreTagService = genreTagService;
-        this.imageUploadService = imageUploadService;
-        this.defaultImageLink = "https://dkckcusqogzbwetnizwe.supabase.co/storage/v1/object/public/books/".concat("default-book-cover.jpg");
-
-    }
+    private final String defaultImageLink = "https://dkckcusqogzbwetnizwe.supabase.co/storage/v1/object/public/books/".concat("default-book-cover.jpg");
 
     @Override
     public BookDTO createBook(BookDTO bookDTO) {
@@ -135,7 +128,6 @@ public class BookServiceImpl implements BookService {
                     }
             );
         }
-
         return authors;
     }
 
@@ -154,7 +146,6 @@ public class BookServiceImpl implements BookService {
                     }
             );
         }
-
         return genreTagSet;
     }
 
