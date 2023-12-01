@@ -40,11 +40,15 @@ public class BookController {
         return ResponseEntity.ok(bookService.getAllBooks());
     }
 
-    @GetMapping("filtered/")
-    public ResponseEntity<List<BookDTO>> getFilteredBooks(@RequestParam String title, @RequestParam String authorName,
-                                                          @RequestParam String genre, @RequestParam String language,
-                                                          @RequestParam String publisher) {
-        return ResponseEntity.ok(bookService.getFilteredBooks(title, authorName, genre, language, publisher));
+    @GetMapping(params = {"title", "author"})
+    public ResponseEntity<List<BookDTO>> getFilteredBooks(@RequestParam String title, @RequestParam String author) {
+        return ResponseEntity.ok(bookService.getFilteredBooks(title, author));
+    }
+
+    @GetMapping(params = {"title", "author", "genre", "language"})
+    public ResponseEntity<List<BookDTO>> getFilteredBooks(@RequestParam String title, @RequestParam String author,
+                                                          @RequestParam String genre, @RequestParam String language) {
+        return ResponseEntity.ok(bookService.getFilteredBooks(title, author, genre, language));
     }
 
     @PutMapping("/{bookId}")

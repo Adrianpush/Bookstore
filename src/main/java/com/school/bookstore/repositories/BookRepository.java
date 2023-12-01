@@ -15,19 +15,21 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     List<Book> findByTitleAndPublisher(String title, String publisher);
 
-    @Query("SELECT DISTINCT b FROM Book b " +
-            "LEFT JOIN b.authors a " +
-            "WHERE (:title IS NULL OR LOWER(b.title) LIKE LOWER(CONCAT('%', :title, '%'))) " +
-            "AND (:genreTag IS NULL OR :genreTag MEMBER OF b.genreTagSet) " +
-            "AND (:authorName IS NULL OR LOWER(a.fullName) LIKE LOWER(CONCAT('%', :authorName, '%'))) " +
-            "AND (:publisher IS NULL OR LOWER(b.publisher) LIKE LOWER(CONCAT('%', :publisher, '%'))) " +
-            "AND (:language IS NULL OR b.language = :language)")
-    List<Book> findBooksByAttributes(
+    @Query("SELECT b FROM Book b JOIN b.authors a WHERE REPLACE(LOWER(b.title), ' ', '') LIKE REPLACE(LOWER(CONCAT('%', :title, '%')), ' ', '') " +
+            "OR REPLACE(LOWER(a.fullName), ' ', '') LIKE REPLACE(LOWER(CONCAT('%', :authorName, '%')), ' ', '')")
+    List<Book> findBooksByTitleAndAuthorName(@Param("title") String title, @Param("authorName") String authorName);
+
+    @Query("SELECT b FROM Book b " +
+            "JOIN b.authors a " +
+            "JOIN b.genreTagSet t " +
+            "WHERE REPLACE(LOWER(b.title), ' ', '') LIKE REPLACE(LOWER(CONCAT('%', :title, '%')), ' ', '') " +
+            "   OR REPLACE(LOWER(a.fullName), ' ', '') LIKE REPLACE(LOWER(CONCAT('%', :authorName, '%')), ' ', '') " +
+            "   AND t.genre = :genre " +
+            "   AND b.language = :language")
+    List<Book> findBooksByTitleOrAuthorNameAndGenreAndLanguage(
             @Param("title") String title,
-            @Param("genreTag") GenreTag genreTag,
             @Param("authorName") String authorName,
-            @Param("publisher") String publisher,
-            @Param("language") Language language
-    );
+            @Param("genre") String genre,
+            @Param("language") Language language);
 
 }

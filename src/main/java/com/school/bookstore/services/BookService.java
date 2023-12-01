@@ -13,13 +13,13 @@ public interface BookService {
 
     List<BookDTO> getAllBooks();
 
-    List<BookDTO> getFilteredBooks(String title, String authorName, String genre, String language, String publisher);
-
     BookDTO updateBook(Long bookId, BookDTO bookDTO);
 
     BookDTO changeBookCoverImage(Long bookId, MultipartFile file);
 
-
-
     void deleteBookById(Long bookId);
+
+    List<BookDTO> getFilteredBooks(String title, String author);
+
+    List<BookDTO> getFilteredBooks(String title, String author, String genre, String language);
 }
