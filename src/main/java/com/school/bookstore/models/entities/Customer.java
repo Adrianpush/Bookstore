@@ -23,6 +23,9 @@ public class Customer {
     private String address;
     @Transient
     private List<OrderItem> shoppingCart;
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(
+            mappedBy = "customer",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.PERSIST)
     private List<Order> orderHistory;
 }

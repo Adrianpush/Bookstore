@@ -22,8 +22,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerDTO createCustomer(CustomerDTO customerDTO) {
         checkForDuplicate(customerDTO.getEmail());
-        Customer customer = convertToCustomerEntity(customerDTO);
-        customer = customerRepository.save(customer);
+        Customer customer = customerRepository.save(convertToCustomerEntity(customerDTO));
 
         return convertToCustomerDTO(customer);
     }
@@ -56,7 +55,7 @@ public class CustomerServiceImpl implements CustomerService {
         customer.setFullName(customerDTO.getFullName());
         customer.setPassword(customerDTO.getPassword());
         customer.setAddress(customerDTO.getAddress());
-        customer.setAddress(customerDTO.getAddress());
+        customer.setEmail(customerDTO.getEmail());
         List<OrderItem> shoppingCart = new ArrayList<>();
         customer.setShoppingCart(shoppingCart);
         List<Order> orderHistory = new ArrayList<>();
@@ -70,6 +69,7 @@ public class CustomerServiceImpl implements CustomerService {
         customerDTO.setId(customer.getId());
         customerDTO.setFullName(customer.getFullName());
         customerDTO.setEmail(customer.getEmail());
+        customerDTO.setPassword(customer.getPassword());
         customerDTO.setAddress(customer.getAddress());
 
         return customerDTO;

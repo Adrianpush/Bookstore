@@ -6,6 +6,7 @@ import com.school.bookstore.models.dtos.BookDTO;
 import com.school.bookstore.models.entities.Author;
 import com.school.bookstore.models.entities.Book;
 import com.school.bookstore.models.entities.GenreTag;
+import com.school.bookstore.models.entities.Language;
 import com.school.bookstore.repositories.BookRepository;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -51,8 +52,19 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookDTO> getFilteredBooks(String title, String authorName, String genre, String language, String publisher) {
-        return bookRepository.findAll().stream().map(this::convertToBookDTO).toList();
+    public List<BookDTO> getFilteredBooks(String title, String author) {
+        return bookRepository.findBooksByTitleAndAuthorName(title, author)
+                .stream().map(this::convertToBookDTO)
+                .toList();
+    }
+
+    @Override
+    public List<BookDTO> getFilteredBooks(String title, String author, String genre, String language) {
+        Language lang = Language.valueOf(language);
+        return bookRepository.findBooksByTitleOrAuthorNameAndGenreAndLanguage(title, author, genre, lang)
+                .stream()
+                .map(this::convertToBookDTO)
+                .toList();
     }
 
     @Override
