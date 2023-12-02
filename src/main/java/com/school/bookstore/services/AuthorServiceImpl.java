@@ -1,5 +1,6 @@
 package com.school.bookstore.services;
 
+import com.school.bookstore.exceptions.AuthorNotFoundException;
 import com.school.bookstore.models.dtos.AuthorDTO;
 import com.school.bookstore.models.entities.Author;
 import com.school.bookstore.repositories.AuthorRepository;
@@ -19,7 +20,7 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     public AuthorDTO getAuthorById(Long id) {
         Author author =  authorRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Author not found"));
+                .orElseThrow(() -> new AuthorNotFoundException("Author not found"));
         AuthorDTO authorDTO = new AuthorDTO();
         authorDTO.setId(author.getId());
         authorDTO.setFullName(author.getFullName());

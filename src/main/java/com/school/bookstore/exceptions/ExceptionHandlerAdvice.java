@@ -60,6 +60,11 @@ public class ExceptionHandlerAdvice {
         return new ResponseEntity<>(objectToString(Map.of("message", imageUploadException)), SERVICE_UNAVAILABLE);
     }
 
+    @ExceptionHandler(AuthorNotFoundException.class)
+    public ResponseEntity<String> authorNotFoundException(AuthorNotFoundException authorNotFoundException) {
+        return new ResponseEntity<>(objectToString(Map.of("message", authorNotFoundException)), NOT_FOUND);
+    }
+
     private String objectToString(Object response) {
         try {
             return objectMapper.writeValueAsString(response);

@@ -100,4 +100,10 @@ public class OrderServiceImpl implements OrderService{
         return OrderItem.builder()
                 .build();
     }
+
+//    private void validateOrder(OrderDTO orderDTO) {
+//        orderDTO.getOrderItems().stream()
+//                .filter(orderItemDTO -> bookRepository.existsById(orderItemDTO.getBookId())
+//                && orderItemDTO.)
+//    }
 }
