@@ -65,6 +65,31 @@ public class OrderServiceImpl implements OrderService{
                 .build();
     }
 
+    @Override
+    public OrderDTO getOrderById(Long orderId) {
+        return null;
+    }
+
+    @Override
+    public List<OrderDTO> getALlOrders() {
+        return null;
+    }
+
+    @Override
+    public List<OrderDTO> getAllOrdersByCustomer(Long customerId) {
+        return null;
+    }
+
+    @Override
+    public OrderDTO markOrderCompleted(Long orderId) {
+        return null;
+    }
+
+    @Override
+    public void deleteOrder(Long orderId) {
+
+    }
+
     private boolean validateOrder(OrderItemDTO orderItemDTO) {
         Book book = bookRepository.findById(orderItemDTO.getBookId())
                 .orElseThrow(() -> new EntityNotFoundException("Book not found"));

@@ -1,11 +1,14 @@
 package com.school.bookstore.services;
 
+import com.school.bookstore.exceptions.ImageUploadException;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -29,7 +32,7 @@ public class ImageUploadServiceImpl implements ImageUploadService {
 
     @Override
     public String uploadImage(MultipartFile multipartFile, String fileName) {
-        log.info("uploading image");
+        verifyFile(multipartFile);
         RequestBody requestBody = null;
         try {
             requestBody = new MultipartBody.Builder()
@@ -38,7 +41,7 @@ public class ImageUploadServiceImpl implements ImageUploadService {
                             RequestBody.create(MediaType.parse(Objects.requireNonNull(multipartFile.getContentType())), multipartFile.getBytes()))
                     .build();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ImageUploadException("Unable to upload file");
         }
 
         Request request = new Request.Builder()
@@ -46,17 +49,16 @@ public class ImageUploadServiceImpl implements ImageUploadService {
                 .addHeader("Authorization", "Bearer " + apiKey)
                 .post(requestBody)
                 .build();
-        log.info("sending request");
         try (Response response = client.newCall(request).execute()) {
-            log.info("request successful");
             return imageBaseUrl.concat(fileName);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ImageUploadException("Unable to upload file");
         }
     }
 
     @Override
     public String updateImage(MultipartFile multipartFile, String fileName) {
+        verifyFile(multipartFile);
         RequestBody requestBody = null;
         try {
             requestBody = new MultipartBody.Builder()
@@ -65,7 +67,7 @@ public class ImageUploadServiceImpl implements ImageUploadService {
                             RequestBody.create(MediaType.parse(Objects.requireNonNull(multipartFile.getContentType())), multipartFile.getBytes()))
                     .build();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ImageUploadException("Unable to upload file");
         }
 
         Request request = new Request.Builder()
@@ -78,7 +80,27 @@ public class ImageUploadServiceImpl implements ImageUploadService {
             log.info("request successful");
             return imageBaseUrl.concat(fileName);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ImageUploadException("Unable to upload file");
         }
+    }
+
+    private void verifyFile(MultipartFile file) {
+        if (!isJPEG(file) || !isUnderSizeLimit(file, 1000)) {
+            throw new ImageUploadException("Unable to upload file");
+        }
+    }
+
+    private static boolean isJPEG(MultipartFile file) {
+        try {
+            BufferedImage image = ImageIO.read(file.getInputStream());
+            return image != null && "jpeg".equalsIgnoreCase(Objects.requireNonNull(file.getContentType()).split("/")[1]);
+        } catch (IOException e) {
+            log.info("File upload failed");
+        }
+        return false;
+    }
+
+    private static boolean isUnderSizeLimit(MultipartFile file, long sizeLimitKB) {
+        return file.getSize() <= sizeLimitKB * 1024;
     }
 }

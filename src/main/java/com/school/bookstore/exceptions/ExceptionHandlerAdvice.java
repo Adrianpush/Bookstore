@@ -55,6 +55,11 @@ public class ExceptionHandlerAdvice {
         return new ResponseEntity<>(objectToString(Map.of("message", customerNotFoundException)), NOT_FOUND);
     }
 
+    @ExceptionHandler(ImageUploadException.class)
+    public ResponseEntity<String> imageUploadException(ImageUploadException imageUploadException) {
+        return new ResponseEntity<>(objectToString(Map.of("message", imageUploadException)), SERVICE_UNAVAILABLE);
+    }
+
     private String objectToString(Object response) {
         try {
             return objectMapper.writeValueAsString(response);

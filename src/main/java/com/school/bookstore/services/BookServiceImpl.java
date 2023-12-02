@@ -8,8 +8,10 @@ import com.school.bookstore.models.entities.Book;
 import com.school.bookstore.models.entities.GenreTag;
 import com.school.bookstore.models.entities.Language;
 import com.school.bookstore.repositories.BookRepository;
+import com.school.bookstore.repositories.CustomBookRepository;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,15 +28,15 @@ public class BookServiceImpl implements BookService {
     private final AuthorService authorService;
     private final GenreTagService genreTagService;
     private final ImageUploadService imageUploadService;
-    private final String defaultImageLink = "https://dkckcusqogzbwetnizwe.supabase.co/storage/v1/object/public/books/".concat("default-book-cover.jpg");
+    private static final String DEFAULT_IMAGE = "https://dkckcusqogzbwetnizwe.supabase.co" +
+            "/storage/v1/object/public/books/default-book-cover.jpg";
+    private static final String BOOK_NOT_FOUND = "Database doesn't contain any book with id %s.";
 
     @Override
     public BookDTO createBook(BookDTO bookDTO) {
-        if (isDuplicate(bookDTO)) {
-            throw new BookCreateException("Book already in database.");
-        }
+        checkForDuplicate(bookDTO);
         Book book = convertToBookEntity(bookDTO);
-        book.setImageLink(defaultImageLink);
+        book.setImageLink(DEFAULT_IMAGE);
         Book bookEntity = bookRepository.save(book);
         return convertToBookDTO(bookEntity);
     }
@@ -42,26 +44,21 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookDTO getBookById(Long bookId) {
         Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new BookNotFoundException("Book with id " + bookId + " not in database."));
+                .orElseThrow(() -> new BookNotFoundException(BOOK_NOT_FOUND.formatted(bookId)));
         return convertToBookDTO(book);
     }
 
     @Override
-    public List<BookDTO> getAllBooks() {
-        return bookRepository.findAll().stream().map(this::convertToBookDTO).toList();
-    }
+    public List<BookDTO> getBooks(String searchString, String genre, String language) {
 
-    @Override
-    public List<BookDTO> getFilteredBooks(String title, String author) {
-        return bookRepository.findBooksByTitleAndAuthorName(title, author)
-                .stream().map(this::convertToBookDTO)
-                .toList();
-    }
+        Language lang;
+        try {
+            lang = Language.valueOf(language.toUpperCase());
+        } catch (NullPointerException | IllegalArgumentException exception) {
+            lang = null;
+        }
 
-    @Override
-    public List<BookDTO> getFilteredBooks(String title, String author, String genre, String language) {
-        Language lang = Language.valueOf(language);
-        return bookRepository.findBooksByTitleOrAuthorNameAndGenreAndLanguage(title, author, genre, lang)
+        return bookRepository.findBooksByTitleOrAuthorNameAndGenreAndLanguage(searchString, genre, lang)
                 .stream()
                 .map(this::convertToBookDTO)
                 .toList();
@@ -69,16 +66,18 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookDTO updateBook(Long bookId, BookDTO bookDTO) {
-        if (!isDuplicate(bookDTO)) {
-            throw new BookCreateException("Book already in database.");
-        }
+        Book bookToBeModified = bookRepository.findById(bookId)
+                .orElseThrow(() -> new BookNotFoundException(BOOK_NOT_FOUND.formatted(bookId)));
 
-        if (bookRepository.existsById(bookId)) {
-            Book bookEntity = bookRepository.save(convertToBookEntity(bookDTO));
-            return convertToBookDTO(bookEntity);
+        if (!(bookToBeModified.getPublisher().equals(bookDTO.getPublisher()) &&
+                bookToBeModified.getTitle().equals(bookDTO.getTitle()))) {
+            checkForDuplicate(bookDTO);
         }
-
-        throw new BookNotFoundException("Book with id " + bookId + " not in database.");
+        Book updatedBook = convertToBookEntity(bookDTO);
+        updatedBook.setId(bookToBeModified.getId());
+        updatedBook.setImageLink(bookToBeModified.getImageLink());
+        updatedBook = bookRepository.save(updatedBook);
+        return convertToBookDTO(updatedBook);
     }
 
     @Override
@@ -86,17 +85,17 @@ public class BookServiceImpl implements BookService {
         if (bookRepository.existsById(bookId)) {
             bookRepository.deleteById(bookId);
         } else {
-            throw new BookNotFoundException("Book with id " + bookId + " not in database.");
+            throw new BookNotFoundException(BOOK_NOT_FOUND.formatted(bookId));
         }
     }
 
     @Override
     public BookDTO changeBookCoverImage(Long bookId, MultipartFile file) {
         Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new BookNotFoundException("Book with id " + bookId + " not in database."));
+                .orElseThrow(() -> new BookNotFoundException(BOOK_NOT_FOUND.formatted(bookId)));
 
-        String imageLink = "";
-        if (book.getImageLink().equals(defaultImageLink)) {
+        String imageLink;
+        if (book.getImageLink().equals(DEFAULT_IMAGE)) {
             imageLink = imageUploadService.uploadImage(file, bookId.toString());
         } else {
             imageLink = imageUploadService.updateImage(file, bookId.toString());
@@ -108,7 +107,6 @@ public class BookServiceImpl implements BookService {
     }
 
     private Book convertToBookEntity(BookDTO bookDTO) {
-
         Set<Author> authors = getAuthors(bookDTO.getAuthorNameList());
         Set<GenreTag> genreTagSet = getGenreTags(bookDTO.getGenreTagList());
 
@@ -116,12 +114,32 @@ public class BookServiceImpl implements BookService {
                 .title(bookDTO.getTitle())
                 .authors(authors)
                 .publisher(bookDTO.getPublisher())
+                .description(bookDTO.getDescription())
                 .genreTagSet(genreTagSet)
                 .yearPublished(bookDTO.getYearPublished())
                 .language(bookDTO.getLanguage())
                 .numPages(bookDTO.getNumPages())
+                .priceBeforeDiscount(bookDTO.getPriceBeforeDiscount())
                 .discountPercent(bookDTO.getDiscountPercent())
                 .copiesAvailable(bookDTO.getCopiesAvailable())
+                .build();
+    }
+
+    private BookDTO convertToBookDTO(Book book) {
+        return BookDTO.builder()
+                .id(book.getId())
+                .title(book.getTitle())
+                .authorNameList(book.getAuthors().stream().map(Author::getFullName).toList())
+                .genreTagList(book.getGenreTagSet().stream().map(GenreTag::getGenre).toList())
+                .publisher(book.getPublisher())
+                .yearPublished(book.getYearPublished())
+                .description(book.getDescription())
+                .language(book.getLanguage())
+                .numPages(book.getNumPages())
+                .priceBeforeDiscount(book.getPriceBeforeDiscount())
+                .discountPercent(book.getDiscountPercent())
+                .copiesAvailable(book.getCopiesAvailable())
+                .imageLink(book.getImageLink())
                 .build();
     }
 
@@ -161,26 +179,10 @@ public class BookServiceImpl implements BookService {
         return genreTagSet;
     }
 
-    private BookDTO convertToBookDTO(Book book) {
-        BookDTO bookDTO = new BookDTO();
-        bookDTO.setId(book.getId());
-        bookDTO.setTitle(book.getTitle());
-        bookDTO.setAuthorNameList(book.getAuthors().stream().map(Author::getFullName).toList());
-        bookDTO.setGenreTagList(book.getGenreTagSet().stream().map(GenreTag::getGenre).toList());
-        bookDTO.setPublisher(book.getPublisher());
-        bookDTO.setYearPublished(book.getYearPublished());
-        bookDTO.setDescription(book.getDescription());
-        bookDTO.setLanguage(book.getLanguage());
-        bookDTO.setNumPages(book.getNumPages());
-        bookDTO.setPriceBeforeDiscount(book.getPriceBeforeDiscount());
-        bookDTO.setDiscountPercent(book.getDiscountPercent());
-        bookDTO.setCopiesAvailable(book.getCopiesAvailable());
-        bookDTO.setImageLink(book.getImageLink());
-
-        return bookDTO;
-    }
-
-    private boolean isDuplicate(BookDTO bookDTO) {
-        return !bookRepository.findByTitleAndPublisher(bookDTO.getTitle(), bookDTO.getPublisher()).isEmpty();
+    private void checkForDuplicate(BookDTO bookDTO) {
+        Optional<Book> bookOptional = bookRepository.findByTitleAndPublisher(bookDTO.getTitle(), bookDTO.getPublisher());
+        if(bookOptional.isPresent()) {
+            throw new BookCreateException("Book already in database with id: " + bookOptional.get().getId());
+        }
     }
 }

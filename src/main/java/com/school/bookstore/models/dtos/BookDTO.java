@@ -5,22 +5,35 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class BookDTO {
 
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
     @NotBlank
+    @Size(min = 2, message = "{validation.title.size.too_short}")
+    @Size(max = 200, message = "{validation.title.size.too_long}")
     private String title;
     private List<String> authorNameList;
     private List<String> genreTagList;
     @NotBlank
+    @Size(min = 2, message = "{validation.publisher.size.too_short}")
+    @Size(max = 200, message = "{validation.publisher.size.too_long}")
     private String publisher;
     private int yearPublished;
+    @Size(min = 5, message = "{validation.description.size.too_short}")
+    @Size(max = 5000, message = "{validation.description.size.too_long}")
     private String description;
     private Language language;
     private int numPages;

@@ -11,15 +11,11 @@ public interface BookService {
 
     BookDTO getBookById(Long bookId);
 
-    List<BookDTO> getAllBooks();
-
     BookDTO updateBook(Long bookId, BookDTO bookDTO);
 
     BookDTO changeBookCoverImage(Long bookId, MultipartFile file);
 
     void deleteBookById(Long bookId);
 
-    List<BookDTO> getFilteredBooks(String title, String author);
-
-    List<BookDTO> getFilteredBooks(String title, String author, String genre, String language);
+    List<BookDTO> getBooks(String searchString, String genre, String language);
 }

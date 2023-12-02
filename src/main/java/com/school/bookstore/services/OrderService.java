@@ -8,4 +8,14 @@ import java.util.List;
 public interface OrderService {
 
     OrderDTO createOrder(Long customer, List<OrderItemDTO> shoppingCart);
+
+    OrderDTO getOrderById(Long orderId);
+
+    List<OrderDTO> getALlOrders();
+
+    List<OrderDTO> getAllOrdersByCustomer(Long customerId);
+
+    OrderDTO markOrderCompleted(Long orderId);
+
+    void deleteOrder(Long orderId);
 }

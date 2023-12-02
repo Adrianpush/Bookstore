@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AuthorService {
+
     Author createAuthor(String authorFullName);
 
     Optional<Author> getAuthorByName(String authorFullName);

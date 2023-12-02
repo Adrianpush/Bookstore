@@ -9,6 +9,8 @@ import java.util.Optional;
 public interface GenreTagService {
 
     GenreTag createGenreTag(String genreName);
+
     Optional<GenreTag> getGenreTag(String genreName);
+
     List<GenreTagDTO> getAllGenreTags();
 }
