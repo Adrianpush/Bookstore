@@ -43,8 +43,8 @@ public class AuthorServiceImpl implements AuthorService {
     public AuthorDTO updateAuthor(Long id, AuthorDTO authorDTO) {
         Author author =  authorRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Author not found"));
-        author.setFullName(authorDTO.getFullName());
         author.setAuthorInformation(authorDTO.getAuthorInfo());
+        author = authorRepository.save(author);
 
         return AuthorDTO.builder()
                 .id(author.getId())

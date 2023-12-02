@@ -13,6 +13,6 @@ public class Author {
     private Long id;
     @Column(name = "full_name")
     private String fullName;
-    @Column(name = "author_information")
+    @Column(name = "author_information", length = 5000)
     private String authorInformation;
 }

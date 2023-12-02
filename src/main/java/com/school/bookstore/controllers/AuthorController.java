@@ -29,8 +29,8 @@ public class AuthorController {
         return ResponseEntity.ok(authorService.getAllAuthors());
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<AuthorDTO> addInformation(@PathVariable Long id, @Valid @RequestBody AuthorDTO authorDTO) {
+    @PatchMapping("/{id}")
+    public ResponseEntity<AuthorDTO> addInformation(@PathVariable Long id, @RequestBody AuthorDTO authorDTO) {
         return ResponseEntity.ok(authorService.updateAuthor(id, authorDTO));
     }
 }
