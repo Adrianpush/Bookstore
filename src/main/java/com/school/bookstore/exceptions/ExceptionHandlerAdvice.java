@@ -65,6 +65,11 @@ public class ExceptionHandlerAdvice {
         return new ResponseEntity<>(objectToString(Map.of("message", authorNotFoundException)), NOT_FOUND);
     }
 
+    @ExceptionHandler(OrderCreateException.class)
+    public ResponseEntity<String> orderCreateException(OrderCreateException orderCreateException) {
+        return new ResponseEntity<>(objectToString(Map.of("message", orderCreateException)), BAD_REQUEST);
+    }
+
     private String objectToString(Object response) {
         try {
             return objectMapper.writeValueAsString(response);

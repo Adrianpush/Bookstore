@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -20,4 +21,6 @@ public class OrderDTO {
     List<OrderItemDTO> orderItems;
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     OrderStatus orderStatus;
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+    LocalDateTime createdAt;
 }
