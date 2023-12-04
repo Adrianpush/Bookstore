@@ -41,6 +41,7 @@ public class OrderItemServiceImpl implements OrderItemService{
                 .build();
 
         book.setCopiesAvailable(book.getCopiesAvailable() - orderItem.getQuantity());
+        bookRepository.save(book);
 
         return orderItemRepository.save(orderItem);
     }
