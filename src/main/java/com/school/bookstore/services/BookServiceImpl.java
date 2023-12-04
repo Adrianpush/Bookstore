@@ -105,7 +105,6 @@ public class BookServiceImpl implements BookService {
 
         return convertToBookDTO(updatedBook);
     }
-
     private Book convertToBookEntity(BookDTO bookDTO) {
         Set<Author> authors = getAuthors(bookDTO.getAuthorNameList());
         Set<GenreTag> genreTagSet = getGenreTags(bookDTO.getGenreTagList());

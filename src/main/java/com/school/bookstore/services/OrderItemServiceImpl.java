@@ -3,6 +3,7 @@ package com.school.bookstore.services;
 import com.school.bookstore.exceptions.BookNotFoundException;
 import com.school.bookstore.exceptions.OrderCreateException;
 import com.school.bookstore.models.dtos.OrderItemDTO;
+import com.school.bookstore.models.entities.Book;
 import com.school.bookstore.models.entities.Order;
 import com.school.bookstore.models.entities.OrderItem;
 import com.school.bookstore.repositories.BookRepository;
@@ -29,11 +30,17 @@ public class OrderItemServiceImpl implements OrderItemService{
 
     @Override
     public OrderItem createOrderItem(OrderItemDTO orderItemDTO, Order order) {
+
+        Book book = bookRepository.findById(orderItemDTO.getBookId())
+                .orElseThrow(() -> new BookNotFoundException("Book not found"));
+
         OrderItem orderItem = OrderItem.builder()
-                .book(bookRepository.findById(orderItemDTO.getBookId()).get())
+                .book(book)
                 .quantity(orderItemDTO.getQuantity())
                 .order(order)
                 .build();
+
+        book.setCopiesAvailable(book.getCopiesAvailable() - orderItem.getQuantity());
 
         return orderItemRepository.save(orderItem);
     }

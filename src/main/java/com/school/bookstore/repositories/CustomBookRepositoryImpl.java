@@ -48,7 +48,6 @@ public class CustomBookRepositoryImpl implements CustomBookRepository {
         }
 
         if (language != null) {
-            log.info("lang");
             predicates.add(criteriaBuilder.equal(bookRoot.get("language"), language));
         }
 

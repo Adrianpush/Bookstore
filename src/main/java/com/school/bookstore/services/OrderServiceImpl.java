@@ -1,13 +1,10 @@
 package com.school.bookstore.services;
 
-import com.school.bookstore.exceptions.BookNotFoundException;
-import com.school.bookstore.exceptions.OrderCreateException;
+import com.school.bookstore.exceptions.CustomerNotFoundException;
 import com.school.bookstore.models.dtos.OrderDTO;
 import com.school.bookstore.models.dtos.OrderItemDTO;
 import com.school.bookstore.models.entities.*;
-import com.school.bookstore.repositories.BookRepository;
 import com.school.bookstore.repositories.CustomerRepository;
-import com.school.bookstore.repositories.OrderItemRepository;
 import com.school.bookstore.repositories.OrderRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +31,7 @@ public class OrderServiceImpl implements OrderService {
 
         Order order = new Order();
         order = orderRepository.save(order);
-        addOrderItems(shoppingCart.getOrderItems(), order);
+        order.setOrderItems(createOrderItems(shoppingCart.getOrderItems(), order));
         order.setCustomer(customer);
         order.setCreatedAt(LocalDateTime.now());
         order.setOrderStatus(OrderStatus.IN_PROGRESS);
@@ -46,22 +43,33 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDTO getOrderById(Long orderId) {
-        return null;
+        return convertToOrderDTO(orderRepository.findById(orderId)
+                .orElseThrow(() -> new EntityNotFoundException("Order not found")));
     }
 
     @Override
     public List<OrderDTO> getALlOrders() {
-        return null;
+        return orderRepository.findAll().stream()
+                .map(this::convertToOrderDTO)
+                .toList();
     }
 
     @Override
     public List<OrderDTO> getAllOrdersByCustomer(Long customerId) {
-        return null;
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new CustomerNotFoundException("Customer not found"));
+        return orderRepository.findAllByCustomer(customer).stream()
+                .map(this::convertToOrderDTO)
+                .toList();
     }
 
     @Override
     public OrderDTO markOrderCompleted(Long orderId) {
-        return null;
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new EntityNotFoundException("Order not found"));
+        order.setOrderStatus(OrderStatus.COMPLETED);
+
+        return convertToOrderDTO(order);
     }
 
     @Override
@@ -80,6 +88,7 @@ public class OrderServiceImpl implements OrderService {
                 .orderItems(order.getOrderItems().stream()
                         .map(orderItemService::convertoToOrderItemDTO)
                         .toList())
+                .customerId(order.getCustomer().getId())
                 .orderStatus(order.getOrderStatus())
                 .createdAt(order.getCreatedAt())
                 .build();
@@ -90,11 +99,12 @@ public class OrderServiceImpl implements OrderService {
                 .forEach(orderItemService::validateOrderItemDTO);
     }
 
-    private void addOrderItems(List<OrderItemDTO> orderItemDTOs, Order order) {
+    private List<OrderItem> createOrderItems(List<OrderItemDTO> orderItemDTOs, Order order) {
         List<OrderItem> orderItems = new ArrayList<>();
+
         orderItemDTOs.forEach(
                 orderItemDTO -> orderItems.add(orderItemService.createOrderItem(orderItemDTO, order))
         );
-        order.setOrderItems(orderItems);
+        return orderItems;
     }
 }

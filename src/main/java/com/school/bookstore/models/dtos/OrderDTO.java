@@ -18,6 +18,7 @@ public class OrderDTO {
 
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     Long id;
+    Long customerId;
     List<OrderItemDTO> orderItems;
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     OrderStatus orderStatus;
