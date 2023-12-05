@@ -8,10 +8,8 @@ import com.school.bookstore.models.entities.Book;
 import com.school.bookstore.models.entities.GenreTag;
 import com.school.bookstore.models.entities.Language;
 import com.school.bookstore.repositories.BookRepository;
-import com.school.bookstore.repositories.CustomBookRepository;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,15 +26,15 @@ public class BookServiceImpl implements BookService {
     private final AuthorService authorService;
     private final GenreTagService genreTagService;
     private final ImageUploadService imageUploadService;
-    private static final String DEFAULT_IMAGE = "https://dkckcusqogzbwetnizwe.supabase.co" +
+    private static final String DEFAULT_IMAGE_LINK = "https://dkckcusqogzbwetnizwe.supabase.co" +
             "/storage/v1/object/public/books/default-book-cover.jpg";
-    private static final String BOOK_NOT_FOUND = "Database doesn't contain any book with id %s.";
+    private static final String BOOK_NOT_FOUND_MESSAGE = "Database doesn't contain any book with id %s.";
 
     @Override
     public BookDTO createBook(BookDTO bookDTO) {
         checkForDuplicate(bookDTO);
         Book book = convertToBookEntity(bookDTO);
-        book.setImageLink(DEFAULT_IMAGE);
+        book.setImageLink(DEFAULT_IMAGE_LINK);
         Book bookEntity = bookRepository.save(book);
         return convertToBookDTO(bookEntity);
     }
@@ -44,13 +42,12 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookDTO getBookById(Long bookId) {
         Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new BookNotFoundException(BOOK_NOT_FOUND.formatted(bookId)));
+                .orElseThrow(() -> new BookNotFoundException(BOOK_NOT_FOUND_MESSAGE.formatted(bookId)));
         return convertToBookDTO(book);
     }
 
     @Override
     public List<BookDTO> getBooks(String searchString, String genre, String language) {
-
         Language lang;
         try {
             lang = Language.valueOf(language.toUpperCase());
@@ -67,7 +64,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookDTO updateBook(Long bookId, BookDTO bookDTO) {
         Book bookToBeModified = bookRepository.findById(bookId)
-                .orElseThrow(() -> new BookNotFoundException(BOOK_NOT_FOUND.formatted(bookId)));
+                .orElseThrow(() -> new BookNotFoundException(BOOK_NOT_FOUND_MESSAGE.formatted(bookId)));
 
         if (!(bookToBeModified.getPublisher().equals(bookDTO.getPublisher()) &&
                 bookToBeModified.getTitle().equals(bookDTO.getTitle()))) {
@@ -85,17 +82,17 @@ public class BookServiceImpl implements BookService {
         if (bookRepository.existsById(bookId)) {
             bookRepository.deleteById(bookId);
         } else {
-            throw new BookNotFoundException(BOOK_NOT_FOUND.formatted(bookId));
+            throw new BookNotFoundException(BOOK_NOT_FOUND_MESSAGE.formatted(bookId));
         }
     }
 
     @Override
     public BookDTO changeBookCoverImage(Long bookId, MultipartFile file) {
         Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new BookNotFoundException(BOOK_NOT_FOUND.formatted(bookId)));
+                .orElseThrow(() -> new BookNotFoundException(BOOK_NOT_FOUND_MESSAGE.formatted(bookId)));
 
         String imageLink;
-        if (book.getImageLink().equals(DEFAULT_IMAGE)) {
+        if (book.getImageLink().equals(DEFAULT_IMAGE_LINK)) {
             imageLink = imageUploadService.uploadImage(file, bookId.toString());
         } else {
             imageLink = imageUploadService.updateImage(file, bookId.toString());

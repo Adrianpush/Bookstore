@@ -37,10 +37,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public List<CustomerDTO> getAllCustomers() {
-        List<CustomerDTO> customerDTOs = new ArrayList<>();
-        customerRepository.findAll().forEach(customer -> customerDTOs.add(convertToCustomerDTO(customer)));
-
-        return customerDTOs;
+        return customerRepository.findAll().stream()
+                .map(this::convertToCustomerDTO)
+                .toList();
     }
 
     @Override

@@ -24,7 +24,7 @@ public class OrderItemServiceImpl implements OrderItemService{
         if (bookRepository.findById(orderItemDTO.getBookId())
                 .orElseThrow(() -> new BookNotFoundException("Book with id " + orderItemDTO.getBookId() + "not found."))
                 .getCopiesAvailable() < orderItemDTO.getQuantity()) {
-            throw new OrderCreateException("Insuficient quantity for book " + orderItemDTO.getBookId());
+            throw new OrderCreateException("Insufficient quantity for book " + orderItemDTO.getBookId());
         }
     }
 

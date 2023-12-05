@@ -77,11 +77,6 @@ public class OrderServiceImpl implements OrderService {
 
     }
 
-    private OrderItem convertToOrderItemEntity(OrderItemDTO orderItemDTO) {
-        return OrderItem.builder()
-                .build();
-    }
-
     private OrderDTO convertToOrderDTO(Order order) {
         return OrderDTO.builder()
                 .id(order.getId())

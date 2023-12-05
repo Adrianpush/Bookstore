@@ -38,7 +38,8 @@ public class ImageUploadServiceImpl implements ImageUploadService {
             requestBody = new MultipartBody.Builder()
                     .setType(MultipartBody.FORM)
                     .addFormDataPart("file", fileName,
-                            RequestBody.create(MediaType.parse(Objects.requireNonNull(multipartFile.getContentType())), multipartFile.getBytes()))
+                            RequestBody.create(
+                                    MediaType.parse(Objects.requireNonNull(multipartFile.getContentType())), multipartFile.getBytes()))
                     .build();
         } catch (IOException e) {
             throw new ImageUploadException("Unable to upload file");
