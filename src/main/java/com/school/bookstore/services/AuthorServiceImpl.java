@@ -43,7 +43,7 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     public AuthorDTO updateAuthor(Long id, AuthorDTO authorDTO) {
         Author author =  authorRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Author not found"));
+                .orElseThrow(() -> new AuthorNotFoundException("Author not found"));
         author.setAuthorInformation(authorDTO.getAuthorInfo());
         author = authorRepository.save(author);
 
@@ -59,10 +59,6 @@ public class AuthorServiceImpl implements AuthorService {
         Author author = new Author();
         author.setFullName(authorFullName);
         return authorRepository.save(author);
-    }
-
-    public Author getAuthorEntityById(Long id) {
-        return authorRepository.findById(id).orElseThrow();
     }
 
     @Override
