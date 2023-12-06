@@ -3,8 +3,18 @@ package com.school.bookstore.services;
 import com.school.bookstore.models.dtos.AuthorDTO;
 import com.school.bookstore.models.entities.Author;
 
+import java.util.List;
+import java.util.Optional;
+
 public interface AuthorService {
 
-    AuthorDTO createAuthor(AuthorDTO authorDTO);
-    AuthorDTO createAuthor(String authorFullName);
+    Author createAuthor(String authorFullName);
+
+    Optional<Author> getAuthorByName(String authorFullName);
+
+    AuthorDTO getAuthorById(Long id);
+
+    List<AuthorDTO> getAllAuthors();
+
+    AuthorDTO updateAuthor(Long id, AuthorDTO authorDTO);
 }
