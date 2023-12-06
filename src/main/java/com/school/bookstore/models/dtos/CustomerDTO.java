@@ -13,11 +13,11 @@ public class CustomerDTO {
 
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
-    @NotBlank
+    @NotBlank(message = "Customer name must not be blank.")
     private String fullName;
-    @NotBlank
+    @NotBlank(message = "Must set a password.")
     private String password;
-    @NotBlank
+    @NotBlank(message = "Email must not be blank.")
     @Email
     private String email;
     private String address;

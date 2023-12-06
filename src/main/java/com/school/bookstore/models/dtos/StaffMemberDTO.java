@@ -7,10 +7,10 @@ import lombok.Data;
 public class StaffMemberDTO {
 
     private Long id;
-    @NotBlank
+    @NotBlank(message = "Name must not be blank.")
     private String fullName;
-    @NotBlank
+    @NotBlank(message = "Username must not be blank.")
     private String username;
-    @NotBlank
+    @NotBlank(message = "Must set a password.")
     private String password;
 }

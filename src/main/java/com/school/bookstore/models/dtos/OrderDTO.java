@@ -2,6 +2,8 @@ package com.school.bookstore.models.dtos;
 
 import com.school.bookstore.models.entities.OrderStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,7 +20,9 @@ public class OrderDTO {
 
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     Long id;
+    @NotNull(message = "Must have a customer id.")
     Long customerId;
+    @NotEmpty(message = "Cannot create order from empty shopping cart.")
     List<OrderItemDTO> orderItems;
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     OrderStatus orderStatus;

@@ -15,7 +15,7 @@ public class AuthorDTO {
 
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
-    @NotBlank
+    @NotBlank(message = "Author name must not be blank.")
     private String fullName;
     private String authorInfo;
 }

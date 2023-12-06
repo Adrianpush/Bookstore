@@ -19,25 +19,26 @@ public class BookDTO {
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
 
-    @NotBlank
+
     @Size(min = 2, message = "{validation.title.size.too_short}")
     @Size(max = 200, message = "{validation.title.size.too_long}")
+    @NotBlank(message = "Field must not be blank")
     private String title;
 
-    @NotEmpty
+    @NotEmpty(message = "Author list must not be blank")
     private List<String> authorNameList;
 
-    @NotEmpty
+    @NotEmpty(message = "Tag list must not be blank")
     private List<String> genreTagList;
 
-    @NotBlank
+    @NotBlank(message = "Publisher must not be blank")
     @Size(min = 2, message = "{validation.publisher.size.too_short}")
     @Size(max = 200, message = "{validation.publisher.size.too_long}")
     private String publisher;
 
-    private int yearPublished;
     @Size(min = 5, message = "{validation.description.size.too_short}")
     @Size(max = 5000, message = "{validation.description.size.too_long}")
+    private int yearPublished;
 
     private String description;
 

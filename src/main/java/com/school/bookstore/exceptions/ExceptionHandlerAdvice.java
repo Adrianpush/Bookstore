@@ -2,18 +2,30 @@ package com.school.bookstore.exceptions;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static org.springframework.http.HttpStatus.*;
 
 @ControllerAdvice
 @Slf4j
-public class ExceptionHandlerAdvice {
+public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
 
     ObjectMapper objectMapper;
 
@@ -70,10 +82,32 @@ public class ExceptionHandlerAdvice {
         return new ResponseEntity<>(objectToString(Map.of("message", orderCreateException)), BAD_REQUEST);
     }
 
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException ex, WebRequest request) {
+        Map<String, String> errors = new LinkedHashMap<>();
+        for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
+            String propertyPath = violation.getPropertyPath().toString();
+            String fieldName = propertyPath.substring(propertyPath.lastIndexOf('.') + 1);
+            String message = violation.getMessage();
+            errors.put(fieldName, message);
+        }
+        return new ResponseEntity<>(objectToString(errors), HttpStatus.BAD_REQUEST);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        Map<String, String> errors = new LinkedHashMap<>();
+        ex.getBindingResult().getFieldErrors().forEach(error -> {
+            String defaultMessage = Objects.requireNonNull(error.getDefaultMessage());
+            errors.put(error.getField(), defaultMessage);
+        });
+        return new ResponseEntity<>(objectToString(errors), HttpStatus.BAD_REQUEST);
+    }
+
     private String objectToString(Object response) {
         try {
             return objectMapper.writeValueAsString(response);
-        } catch (JsonProcessingException e) {
+        } catch (JsonProcessingException exception) {
             log.error("Error processing response to string");
             return "Internal error";
         }
