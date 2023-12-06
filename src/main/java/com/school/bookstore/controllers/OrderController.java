@@ -29,12 +29,12 @@ public class OrderController {
     }
 
     @GetMapping("customers/{customerId}")
-    private ResponseEntity<List<OrderDTO>> getAllOrdersByCustomer(@PathVariable Long customerId) {
+    public ResponseEntity<List<OrderDTO>> getAllOrdersByCustomer(@PathVariable Long customerId) {
         return ResponseEntity.ok(orderService.getAllOrdersByCustomer(customerId));
     }
 
     @GetMapping("/{orderId}")
-    private ResponseEntity<OrderDTO> getOrderByOrderId(@PathVariable Long orderId) {
+    public ResponseEntity<OrderDTO> getOrderByOrderId(@PathVariable Long orderId) {
         return ResponseEntity.ok(orderService.getOrderById(orderId));
     }
 }

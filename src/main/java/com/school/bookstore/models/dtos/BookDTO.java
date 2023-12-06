@@ -46,13 +46,11 @@ public class BookDTO {
 
     private int numPages;
 
-    @Min(0)
+
     private double priceBeforeDiscount;
 
-    @Min(0) @Max(99)
     private int discountPercent;
 
-    @Min(0)
     private int copiesAvailable;
 
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
