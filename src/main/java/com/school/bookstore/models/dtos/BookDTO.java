@@ -36,21 +36,22 @@ public class BookDTO {
     @Size(max = 200, message = "{validation.publisher.size.too_long}")
     private String publisher;
 
-    @Size(min = 5, message = "{validation.description.size.too_short}")
-    @Size(max = 5000, message = "{validation.description.size.too_long}")
     private int yearPublished;
 
     private String description;
 
     private Language language;
 
+    @Min(0)
     private int numPages;
 
-
+    @Min(0)
     private double priceBeforeDiscount;
 
+    @Min(0) @Max(99)
     private int discountPercent;
 
+    @Min(0)
     private int copiesAvailable;
 
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
