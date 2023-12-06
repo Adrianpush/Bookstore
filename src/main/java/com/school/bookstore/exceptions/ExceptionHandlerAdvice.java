@@ -82,6 +82,11 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(objectToString(Map.of("message", orderCreateException)), BAD_REQUEST);
     }
 
+    @ExceptionHandler(OrderNotFoundException.class)
+    public ResponseEntity<String> orderNotFoundException(OrderCreateException orderNotFoundException) {
+        return new ResponseEntity<>(objectToString(Map.of("message", orderNotFoundException)), NOT_FOUND);
+    }
+
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException ex, WebRequest request) {
         Map<String, String> errors = new LinkedHashMap<>();

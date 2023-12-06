@@ -1,6 +1,7 @@
 package com.school.bookstore.services;
 
 import com.school.bookstore.exceptions.CustomerNotFoundException;
+import com.school.bookstore.exceptions.OrderNotFoundException;
 import com.school.bookstore.models.dtos.OrderDTO;
 import com.school.bookstore.models.dtos.OrderItemDTO;
 import com.school.bookstore.models.entities.*;
@@ -26,7 +27,7 @@ public class OrderServiceImpl implements OrderService {
     public OrderDTO createOrder(Long customerId, OrderDTO shoppingCart) {
 
         Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new EntityNotFoundException("Customer not found"));
+                .orElseThrow(() -> new CustomerNotFoundException("Customer not found"));
         validateOrder(shoppingCart);
 
         Order order = new Order();
@@ -44,7 +45,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDTO getOrderById(Long orderId) {
         return convertToOrderDTO(orderRepository.findById(orderId)
-                .orElseThrow(() -> new EntityNotFoundException("Order not found")));
+                .orElseThrow(() -> new OrderNotFoundException("Order not found")));
     }
 
     @Override
@@ -66,7 +67,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDTO markOrderCompleted(Long orderId) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new EntityNotFoundException("Order not found"));
+                .orElseThrow(() -> new OrderNotFoundException("Order not found"));
         order.setOrderStatus(OrderStatus.COMPLETED);
 
         return convertToOrderDTO(order);
