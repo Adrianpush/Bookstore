@@ -1,7 +1,7 @@
 package com.school.bookstore.controllers;
 
-import com.school.bookstore.models.dtos.CustomerDTO;
-import com.school.bookstore.services.CustomerService;
+import com.school.bookstore.models.dtos.UserDTO;
+import com.school.bookstore.services.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -17,30 +17,30 @@ import java.util.List;
 @RestController
 public class CustomerController {
 
-    private final CustomerService customerService;
+    private final UserService userService;
 
-    public CustomerController(CustomerService customerService) {
-        this.customerService = customerService;
+    public CustomerController(UserService userService) {
+        this.userService = userService;
     }
 
     @PostMapping
-    public ResponseEntity<CustomerDTO> createCustomer(@Valid @RequestBody CustomerDTO customerDTO) {
-        return ResponseEntity.ok(customerService.createCustomer(customerDTO));
+    public ResponseEntity<UserDTO> createCustomer(@Valid @RequestBody UserDTO userDTO) {
+        return ResponseEntity.ok(userService.createCustomer(userDTO));
     }
 
     @GetMapping("/{customerId}")
-    public ResponseEntity<CustomerDTO> getCustomerById(@PathVariable Long customerId) {
-        return ResponseEntity.ok(customerService.getCustomerById(customerId));
+    public ResponseEntity<UserDTO> getCustomerById(@PathVariable Long customerId) {
+        return ResponseEntity.ok(userService.getCustomerById(customerId));
     }
 
     @GetMapping
-    public ResponseEntity<List<CustomerDTO>> getAllCustomers() {
-        return ResponseEntity.ok(customerService.getAllCustomers());
+    public ResponseEntity<List<UserDTO>> getAllCustomers() {
+        return ResponseEntity.ok(userService.getAllCustomers());
     }
 
     @DeleteMapping("/{customerId}")
     public HttpStatus deleteCustomer(@PathVariable Long customerId) {
-        customerService.deleteCustomer(customerId);
+        userService.deleteCustomer(customerId);
         return HttpStatus.NO_CONTENT;
     }
 }

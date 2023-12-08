@@ -5,7 +5,7 @@ import com.school.bookstore.exceptions.OrderNotFoundException;
 import com.school.bookstore.models.dtos.OrderDTO;
 import com.school.bookstore.models.dtos.OrderItemDTO;
 import com.school.bookstore.models.entities.*;
-import com.school.bookstore.repositories.CustomerRepository;
+import com.school.bookstore.repositories.UserRepository;
 import com.school.bookstore.repositories.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,19 +19,19 @@ import java.util.List;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
-    private final CustomerRepository customerRepository;
+    private final UserRepository userRepository;
     private final OrderItemService orderItemService;
 
     @Override
     public OrderDTO createOrder(Long customerId, OrderDTO shoppingCart) {
 
-        Customer customer = customerRepository.findById(customerId)
+        User user = userRepository.findById(customerId)
                 .orElseThrow(() -> new CustomerNotFoundException("Customer not found"));
         validateOrder(shoppingCart);
 
         Order order = new Order();
         order.setOrderItems(createOrderItems(shoppingCart.getOrderItems(), order));
-        order.setCustomer(customer);
+        order.setUser(user);
         order.setCreatedAt(LocalDateTime.now());
         order.setOrderStatus(OrderStatus.IN_PROGRESS);
         order = orderRepository.save(order);
@@ -54,9 +54,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderDTO> getAllOrdersByCustomer(Long customerId) {
-        Customer customer = customerRepository.findById(customerId)
+        User user = userRepository.findById(customerId)
                 .orElseThrow(() -> new CustomerNotFoundException("Customer not found"));
-        return orderRepository.findAllByCustomer(customer).stream()
+        return orderRepository.findAllByCustomer(user).stream()
                 .map(this::convertToOrderDTO)
                 .toList();
     }
@@ -84,7 +84,7 @@ public class OrderServiceImpl implements OrderService {
                 .orderItems(order.getOrderItems().stream()
                         .map(orderItemService::convertoToOrderItemDTO)
                         .toList())
-                .customerId(order.getCustomer().getId())
+                .customerId(order.getUser().getId())
                 .orderStatus(order.getOrderStatus())
                 .createdAt(order.getCreatedAt())
                 .build();
