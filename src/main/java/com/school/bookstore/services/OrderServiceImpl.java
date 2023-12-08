@@ -56,7 +56,7 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderDTO> getAllOrdersByCustomer(Long customerId) {
         User user = userRepository.findById(customerId)
                 .orElseThrow(() -> new CustomerNotFoundException("Customer not found"));
-        return orderRepository.findAllByCustomer(user).stream()
+        return orderRepository.findAllByUser(user).stream()
                 .map(this::convertToOrderDTO)
                 .toList();
     }

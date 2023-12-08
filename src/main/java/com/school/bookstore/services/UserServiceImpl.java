@@ -1,11 +1,9 @@
 package com.school.bookstore.services;
 
-import com.school.bookstore.exceptions.CustomerCreateException;
-import com.school.bookstore.exceptions.CustomerNotFoundException;
+import com.school.bookstore.exceptions.UserCreateException;
 import com.school.bookstore.models.dtos.UserDTO;
 import com.school.bookstore.models.entities.User;
 import com.school.bookstore.models.entities.Order;
-import com.school.bookstore.models.entities.OrderItem;
 import com.school.bookstore.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,32 +21,24 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDTO createCustomer(UserDTO userDTO) {
-        checkForDuplicate(userDTO.getEmail());
-        User user = userRepository.save(convertToCustomerEntity(userDTO));
-
-        return convertToCustomerDTO(user);
-    }
-
-    @Override
-    public UserDTO getCustomerById(Long id) {
+    public UserDTO getUserById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new CustomerNotFoundException("Customer with id " + id + " not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("User with id " + id + " not found"));
 
-        return convertToCustomerDTO(user);
+        return convertToUserDTO(user);
     }
 
     @Override
-    public List<UserDTO> getAllCustomers() {
+    public List<UserDTO> getAllUsers() {
         return userRepository.findAll().stream()
-                .map(this::convertToCustomerDTO)
+                .map(this::convertToUserDTO)
                 .toList();
     }
 
     @Override
-    public void deleteCustomer(Long id) {
+    public void deleteUser(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new CustomerNotFoundException("Customer with id " + id + " not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("User with id " + id + " not found"));
         userRepository.delete(user);
     }
 
@@ -68,21 +58,19 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(newUser);
     }
 
-    private User convertToCustomerEntity(UserDTO userDTO) {
+    private User convertToUserEntity(UserDTO userDTO) {
         User user = new User();
         user.setFullName(userDTO.getFullName());
         user.setPassword(userDTO.getPassword());
         user.setAddress(userDTO.getAddress());
         user.setEmail(userDTO.getEmail());
-        List<OrderItem> shoppingCart = new ArrayList<>();
-        user.setShoppingCart(shoppingCart);
         List<Order> orderHistory = new ArrayList<>();
         user.setOrderHistory(orderHistory);
 
         return user;
     }
 
-    private UserDTO convertToCustomerDTO(User user) {
+    private UserDTO convertToUserDTO(User user) {
         UserDTO userDTO = new UserDTO();
         userDTO.setId(user.getId());
         userDTO.setFullName(user.getFullName());
@@ -93,9 +81,10 @@ public class UserServiceImpl implements UserService {
         return userDTO;
     }
 
-    private void checkForDuplicate(String email) {
+    @Override
+    public void checkForDuplicate(String email) {
         if (userRepository.existsByEmail(email)) {
-            throw new CustomerCreateException("E-mail already in use");
+            throw new UserCreateException("Email already in use");
         }
     }
 }

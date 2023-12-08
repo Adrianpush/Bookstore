@@ -5,6 +5,7 @@ import com.school.bookstore.models.entities.Order;
 import com.school.bookstore.services.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,10 @@ public class OrderController {
 
     private final OrderService orderService;
     @PostMapping("customers/{customerId}")
-    public ResponseEntity<OrderDTO> createOrder(@PathVariable Long customerId, @Valid @RequestBody OrderDTO shoppingCart) {
+    public ResponseEntity<OrderDTO> createOrder(
+            @RequestHeader HttpHeaders headers,
+            @PathVariable Long customerId,
+            @Valid @RequestBody OrderDTO shoppingCart) {
         return ResponseEntity.ok(orderService.createOrder(customerId, shoppingCart));
     }
 

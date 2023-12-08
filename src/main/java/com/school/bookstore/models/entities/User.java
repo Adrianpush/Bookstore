@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Data
-@Table(name = "customers")
+@Table(name = "users")
 @Entity
 @Builder
 @AllArgsConstructor
@@ -31,12 +31,10 @@ public class User implements UserDetails {
     private String email;
     @Column(name = "address")
     private String address;
-    @Transient
-    private List<OrderItem> shoppingCart;
     @OneToMany(
-            mappedBy = "customer",
+            mappedBy = "user",
             fetch = FetchType.LAZY,
-            cascade = CascadeType.PERSIST)
+            cascade = CascadeType.ALL)
     private List<Order> orderHistory;
     @Enumerated(EnumType.STRING)
     Role role;

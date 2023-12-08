@@ -1,5 +1,6 @@
 package com.school.bookstore.services;
 
+import com.school.bookstore.exceptions.AuthentificationException;
 import com.school.bookstore.models.dtos.JwtAuthenticationResponseDTO;
 import com.school.bookstore.models.dtos.SignInRequestDTO;
 import com.school.bookstore.models.dtos.UserDTO;
@@ -23,7 +24,9 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public JwtAuthenticationResponseDTO signup(UserDTO userDTO) {
-        var user = User
+        userService.checkForDuplicate(userDTO.getEmail());
+
+        User user = User
                 .builder()
                 .email(userDTO.getEmail())
                 .password(passwordEncoder.encode(userDTO.getPassword()))
@@ -34,6 +37,7 @@ public class AuthenticationService {
 
         user = userService.save(user);
         String jwt = jwtService.generateToken(user);
+
         return JwtAuthenticationResponseDTO.builder().token(jwt).build();
     }
 
@@ -45,5 +49,14 @@ public class AuthenticationService {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid email or password."));
         String jwt = jwtService.generateToken(user);
         return JwtAuthenticationResponseDTO.builder().token(jwt).build();
+    }
+
+    public boolean isUserAuthorized(Long resourceId, String token) {
+        String claimedUserName = jwtService.extractUserName(token);
+        String resourceEmail = userRepository.findById(resourceId)
+                .orElseThrow(() -> new AuthentificationException("Forbidden"))
+                .getEmail();
+
+        return claimedUserName.equals(resourceEmail);
     }
 }
