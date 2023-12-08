@@ -30,7 +30,6 @@ public class GenreTagServiceImpl implements GenreTagService {
     public GenreTag createGenreTag(String genreName) {
         GenreTag genreTag = new GenreTag();
         genreTag.setGenre(genreName);
-        genreTag = genreTagRepository.save(genreTag);
 
         return genreTag;
     }
