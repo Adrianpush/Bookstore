@@ -21,8 +21,4 @@ public class CustomerDTO {
     @Email
     private String email;
     private String address;
-    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-    private List<OrderItem> shoppingCart;
-
 }
-

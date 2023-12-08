@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
@@ -20,7 +21,7 @@ public class OrderDTO {
 
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     Long id;
-    @NotNull(message = "Must have a customer id.")
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     Long customerId;
     @NotEmpty(message = "Cannot create order from empty shopping cart.")
     List<OrderItemDTO> orderItems;

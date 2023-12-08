@@ -2,5 +2,5 @@ package com.school.bookstore.models.entities;
 
 public enum OrderStatus {
 
-    IN_PROGRESS, COMPLETED;
+    IN_PROGRESS, CANCELED, COMPLETED;
 }

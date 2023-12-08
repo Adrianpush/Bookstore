@@ -7,7 +7,6 @@ import com.school.bookstore.models.dtos.OrderItemDTO;
 import com.school.bookstore.models.entities.*;
 import com.school.bookstore.repositories.CustomerRepository;
 import com.school.bookstore.repositories.OrderRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -31,12 +30,10 @@ public class OrderServiceImpl implements OrderService {
         validateOrder(shoppingCart);
 
         Order order = new Order();
-        order = orderRepository.save(order);
         order.setOrderItems(createOrderItems(shoppingCart.getOrderItems(), order));
         order.setCustomer(customer);
         order.setCreatedAt(LocalDateTime.now());
         order.setOrderStatus(OrderStatus.IN_PROGRESS);
-
         order = orderRepository.save(order);
 
         return convertToOrderDTO(order);
@@ -74,8 +71,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void deleteOrder(Long orderId) {
-
+    public void cancelOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderNotFoundException("Order not found"));
+        order.getOrderItems().forEach(orderItemService::cancelOrderItem);
+        order.setOrderStatus(OrderStatus.CANCELED);
     }
 
     private OrderDTO convertToOrderDTO(Order order) {

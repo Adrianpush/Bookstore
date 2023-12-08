@@ -58,7 +58,7 @@ public class AuthorServiceImpl implements AuthorService {
     public Author createAuthor(String authorFullName) {
         Author author = new Author();
         author.setFullName(authorFullName);
-        return authorRepository.save(author);
+        return author;
     }
 
     @Override

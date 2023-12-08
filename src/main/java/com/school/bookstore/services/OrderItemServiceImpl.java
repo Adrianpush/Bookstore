@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class OrderItemServiceImpl implements OrderItemService{
 
-    private final OrderItemRepository orderItemRepository;
     private final BookRepository bookRepository;
 
 
@@ -43,7 +42,14 @@ public class OrderItemServiceImpl implements OrderItemService{
         book.setCopiesAvailable(book.getCopiesAvailable() - orderItem.getQuantity());
         bookRepository.save(book);
 
-        return orderItemRepository.save(orderItem);
+        return orderItem;
+    }
+
+    @Override
+    public void cancelOrderItem(OrderItem orderItem) {
+        Book book = orderItem.getBook();
+        book.setCopiesAvailable(book.getCopiesAvailable() + orderItem.getQuantity());
+        bookRepository.save(book);
     }
 
     @Override

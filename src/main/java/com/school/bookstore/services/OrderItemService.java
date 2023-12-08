@@ -10,5 +10,7 @@ public interface OrderItemService {
 
     OrderItem createOrderItem(OrderItemDTO orderItemDTO, Order order);
 
+    void cancelOrderItem(OrderItem orderItem);
+
     OrderItemDTO convertoToOrderItemDTO(OrderItem orderItem);
 }
