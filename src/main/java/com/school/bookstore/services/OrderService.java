@@ -6,13 +6,13 @@ import java.util.List;
 
 public interface OrderService {
 
-    OrderDTO createOrder(Long customer, OrderDTO shoppingCart);
+    OrderDTO createOrder(String email, Long customerId, OrderDTO shoppingCart);
 
-    OrderDTO getOrderById(Long orderId);
+    OrderDTO getOrderById(String email, Long orderId);
 
     List<OrderDTO> getALlOrders();
 
-    List<OrderDTO> getAllOrdersByCustomer(Long customerId);
+    List<OrderDTO> getAllOrdersByCustomer(String email, Long customerId);
 
     OrderDTO markOrderCompleted(Long orderId);
 

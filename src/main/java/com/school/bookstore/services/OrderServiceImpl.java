@@ -1,13 +1,16 @@
 package com.school.bookstore.services;
 
+import com.school.bookstore.exceptions.AuthentificationException;
 import com.school.bookstore.exceptions.CustomerNotFoundException;
 import com.school.bookstore.exceptions.OrderNotFoundException;
+import com.school.bookstore.exceptions.UserNotFoundException;
 import com.school.bookstore.models.dtos.OrderDTO;
 import com.school.bookstore.models.dtos.OrderItemDTO;
 import com.school.bookstore.models.entities.*;
 import com.school.bookstore.repositories.UserRepository;
 import com.school.bookstore.repositories.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -16,6 +19,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
@@ -23,10 +27,12 @@ public class OrderServiceImpl implements OrderService {
     private final OrderItemService orderItemService;
 
     @Override
-    public OrderDTO createOrder(Long customerId, OrderDTO shoppingCart) {
+    public OrderDTO createOrder(String customerEmail, Long customerId, OrderDTO shoppingCart) {
 
         User user = userRepository.findById(customerId)
-                .orElseThrow(() -> new CustomerNotFoundException("Customer not found"));
+                .orElseThrow(() -> new UserNotFoundException("Customer not found"));
+
+        validateRequest(customerEmail, user);
         validateOrder(shoppingCart);
 
         Order order = new Order();
@@ -40,9 +46,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderDTO getOrderById(Long orderId) {
-        return convertToOrderDTO(orderRepository.findById(orderId)
-                .orElseThrow(() -> new OrderNotFoundException("Order not found")));
+    public OrderDTO getOrderById(String email, Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderNotFoundException("Order not found"));
+        User user = order.getUser();
+        validateRequest(email, user);
+        return convertToOrderDTO(order);
     }
 
     @Override
@@ -53,9 +62,10 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderDTO> getAllOrdersByCustomer(Long customerId) {
+    public List<OrderDTO> getAllOrdersByCustomer(String email, Long customerId) {
         User user = userRepository.findById(customerId)
-                .orElseThrow(() -> new CustomerNotFoundException("Customer not found"));
+                .orElseThrow(() -> new UserNotFoundException("Customer not found"));
+        validateRequest(email, user);
         return orderRepository.findAllByUser(user).stream()
                 .map(this::convertToOrderDTO)
                 .toList();
@@ -97,10 +107,15 @@ public class OrderServiceImpl implements OrderService {
 
     private List<OrderItem> createOrderItems(List<OrderItemDTO> orderItemDTOs, Order order) {
         List<OrderItem> orderItems = new ArrayList<>();
-
         orderItemDTOs.forEach(
                 orderItemDTO -> orderItems.add(orderItemService.createOrderItem(orderItemDTO, order))
         );
         return orderItems;
+    }
+
+    private void validateRequest(String email, User user) {
+        if (user.getRole() == Role.ROLE_USER && !user.getEmail().equals(email)) {
+            throw new AuthentificationException("Not allowed to access this resource.");
+        }
     }
 }
