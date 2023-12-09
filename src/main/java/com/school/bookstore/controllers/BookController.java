@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +26,7 @@ public class BookController {
         this.bookService = bookService;
     }
 
+    @Secured("ROLE_STAFF")
     @PostMapping
     public ResponseEntity<BookDTO> createBook(@RequestBody @Valid BookDTO bookDTO) {
         return ResponseEntity.ok(bookService.createBook(bookDTO));
@@ -43,17 +45,20 @@ public class BookController {
         return ResponseEntity.ok(bookService.getBooks(searchString, genre, language));
     }
 
+    @Secured("ROLE_STAFF")
     @PutMapping("/{bookId}")
     public ResponseEntity<BookDTO> updateBook(@PathVariable Long bookId, @RequestBody @Valid BookDTO bookDTO) {
         return ResponseEntity.ok(bookService.updateBook(bookId, bookDTO));
     }
 
+    @Secured("ROLE_STAFF")
     @DeleteMapping("/{bookId}")
     public HttpStatus deleteBook(@PathVariable Long bookId) {
         bookService.deleteBookById(bookId);
         return HttpStatus.NO_CONTENT;
     }
 
+    @Secured("ROLE_STAFF")
     @PatchMapping("/{bookId}/cover")
     public ResponseEntity<BookDTO> addBookCoverImage(@PathVariable Long bookId, @RequestBody MultipartFile file) {
         return ResponseEntity.ok(bookService.changeBookCoverImage(bookId, file));

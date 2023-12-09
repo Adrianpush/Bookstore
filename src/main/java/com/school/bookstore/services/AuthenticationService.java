@@ -42,7 +42,7 @@ public class AuthenticationService {
     }
 
 
-    public JwtAuthenticationResponseDTO signin(SignInRequestDTO request) {
+    public JwtAuthenticationResponseDTO signIn(SignInRequestDTO request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         User user = userRepository.findByEmail(request.getEmail())

@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -32,17 +33,19 @@ public class UserController {
         return ResponseEntity.ok(authenticationService.signup(userDTO));
     }
 
+    @Secured("ROLE_USER")
     @GetMapping("/{customerId}")
-    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<UserDTO> getCustomerById(@PathVariable Long customerId) {
         return ResponseEntity.ok(userService.getUserById(customerId));
     }
 
+    @Secured("ROLE_STAFF")
     @GetMapping
     public ResponseEntity<List<UserDTO>> getAllCustomers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
+    @Secured({ "ROLE_USER", "ROLE_STAFF" })
     @DeleteMapping("/{customerId}")
     public HttpStatus deleteCustomer(@PathVariable Long customerId) {
         userService.deleteUser(customerId);
