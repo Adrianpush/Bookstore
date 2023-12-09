@@ -9,11 +9,11 @@ import java.util.List;
 
 public interface UserService {
 
-    UserDTO getUserById(Long id);
+    UserDTO getUserById(String requesterEmail, Long requestedId);
 
     List<UserDTO> getAllUsers();
 
-    void deleteUser(Long id);
+    void deleteUser(String requesterEmail, Long id);
 
     UserDetailsService userDetailsService();
 

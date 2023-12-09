@@ -1,7 +1,9 @@
 package com.school.bookstore.services;
 
+import com.school.bookstore.exceptions.AuthentificationException;
 import com.school.bookstore.exceptions.UserCreateException;
 import com.school.bookstore.models.dtos.UserDTO;
+import com.school.bookstore.models.entities.Role;
 import com.school.bookstore.models.entities.User;
 import com.school.bookstore.models.entities.Order;
 import com.school.bookstore.repositories.UserRepository;
@@ -21,9 +23,10 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDTO getUserById(Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new UsernameNotFoundException("User with id " + id + " not found"));
+    public UserDTO getUserById(String requesterEmail, Long requestedId) {
+        User user = userRepository.findById(requestedId)
+                .orElseThrow(() -> new UsernameNotFoundException("User with id " + requestedId + " not found"));
+        validateRequest(requesterEmail, user);
 
         return convertToUserDTO(user);
     }
@@ -36,9 +39,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(Long id) {
+    public void deleteUser(String requesterEmail, Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("User with id " + id + " not found"));
+        validateRequest(requesterEmail, user);
         userRepository.delete(user);
     }
 
@@ -85,6 +89,12 @@ public class UserServiceImpl implements UserService {
     public void checkForDuplicate(String email) {
         if (userRepository.existsByEmail(email)) {
             throw new UserCreateException("Email already in use");
+        }
+    }
+
+    private void validateRequest(String email, User user) {
+        if (user.getRole() == Role.ROLE_USER && !user.getEmail().equals(email)) {
+            throw new AuthentificationException("Not allowed to access this resource.");
         }
     }
 }
