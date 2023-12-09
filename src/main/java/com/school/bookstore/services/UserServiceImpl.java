@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,6 +22,25 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    @Override
+    public UserDTO createUser(UserDTO userDTO) {
+        checkForDuplicate(userDTO.getEmail());
+
+        User user = User
+                .builder()
+                .email(userDTO.getEmail())
+                .password(passwordEncoder.encode(userDTO.getPassword()))
+                .fullName(userDTO.getFullName())
+                .address(userDTO.getAddress())
+                .role(Role.ROLE_USER)
+                .build();
+
+        user = save(user);
+
+        return convertToUserDTO(user);
+    }
 
     @Override
     public UserDTO getUserById(String requesterEmail, Long requestedId) {

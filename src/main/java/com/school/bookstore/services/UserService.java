@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface UserService {
 
+    UserDTO createUser(UserDTO userDTO);
+
     UserDTO getUserById(String requesterEmail, Long requestedId);
 
     List<UserDTO> getAllUsers();

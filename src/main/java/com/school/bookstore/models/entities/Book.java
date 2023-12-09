@@ -3,6 +3,7 @@ package com.school.bookstore.models.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.Set;
 
 @Builder
@@ -12,7 +13,7 @@ import java.util.Set;
 @Getter
 @Entity
 @Table(name = "books")
-public class Book {
+public class Book implements Serializable {
 
     @Id
     @GeneratedValue

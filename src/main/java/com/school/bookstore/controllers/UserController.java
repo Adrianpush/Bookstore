@@ -27,6 +27,11 @@ public class UserController {
     private final UserService userService;
     private final JwtService jwtService;
 
+    @PostMapping()
+    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserDTO userDTO) {
+        return ResponseEntity.ok(userService.createUser(userDTO));
+    }
+
     @Secured({ "ROLE_USER", "ROLE_STAFF" })
     @GetMapping("/{customerId}")
     public ResponseEntity<UserDTO> getCustomerById(
