@@ -1,15 +1,12 @@
 package com.school.bookstore.controllers;
 
 import com.school.bookstore.models.dtos.OrderDTO;
-import com.school.bookstore.models.entities.Order;
 import com.school.bookstore.services.JwtService;
 import com.school.bookstore.services.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 

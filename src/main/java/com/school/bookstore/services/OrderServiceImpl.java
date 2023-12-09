@@ -1,7 +1,6 @@
 package com.school.bookstore.services;
 
 import com.school.bookstore.exceptions.AuthentificationException;
-import com.school.bookstore.exceptions.CustomerNotFoundException;
 import com.school.bookstore.exceptions.OrderNotFoundException;
 import com.school.bookstore.exceptions.UserNotFoundException;
 import com.school.bookstore.models.dtos.OrderDTO;
