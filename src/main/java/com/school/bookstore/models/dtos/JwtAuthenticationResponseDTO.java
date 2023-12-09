@@ -7,5 +7,6 @@ import lombok.Data;
 @Builder
 public class JwtAuthenticationResponseDTO {
 
+    Long id;
     String token;
 }

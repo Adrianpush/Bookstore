@@ -23,40 +23,15 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public JwtAuthenticationResponseDTO signup(UserDTO userDTO) {
-        userService.checkForDuplicate(userDTO.getEmail());
-
-        User user = User
-                .builder()
-                .email(userDTO.getEmail())
-                .password(passwordEncoder.encode(userDTO.getPassword()))
-                .fullName(userDTO.getFullName())
-                .address(userDTO.getAddress())
-                .role(Role.ROLE_USER)
-                .build();
-
-        user = userService.save(user);
-        String jwt = jwtService.generateToken(user);
-
-        return JwtAuthenticationResponseDTO.builder().token(jwt).build();
-    }
-
-
     public JwtAuthenticationResponseDTO signIn(SignInRequestDTO request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid email or password."));
         String jwt = jwtService.generateToken(user);
-        return JwtAuthenticationResponseDTO.builder().token(jwt).build();
-    }
-
-    public boolean isUserAuthorized(Long resourceId, String token) {
-        String claimedUserName = jwtService.extractUserName(token);
-        String resourceEmail = userRepository.findById(resourceId)
-                .orElseThrow(() -> new AuthentificationException("Forbidden"))
-                .getEmail();
-
-        return claimedUserName.equals(resourceEmail);
+        return JwtAuthenticationResponseDTO.builder()
+                .id(user.getId())
+                .token(jwt)
+                .build();
     }
 }
