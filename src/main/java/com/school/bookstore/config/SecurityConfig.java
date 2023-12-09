@@ -52,8 +52,8 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.GET, "/api/authors", "/api/authors/{id}", "/api/books", "/api/books/{id}", "/api/genre-tags").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/customers").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/authentication","/api/authors", "/api/authors/{id}", "/api/books", "/api/books/{id}", "/api/genre-tags").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/authentication").permitAll()
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider()).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

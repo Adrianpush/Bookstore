@@ -22,15 +22,9 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final AuthenticationService authenticationService;
-    public UserController(UserService userService, AuthenticationService authenticationService) {
-        this.userService = userService;
-        this.authenticationService = authenticationService;
-    }
 
-    @PostMapping
-    public ResponseEntity<JwtAuthenticationResponseDTO> createUser(@Valid @RequestBody UserDTO userDTO) {
-        return ResponseEntity.ok(authenticationService.signup(userDTO));
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
     @Secured("ROLE_USER")
