@@ -36,7 +36,7 @@ public class UserController {
     @GetMapping("/{customerId}")
     public ResponseEntity<UserDTO> getCustomerById(
             @RequestHeader(name = "Authorization") String authorizationHeader,
-            @PathVariable Long customerId) {
+            @PathVariable(required = false) Long customerId) {
         return ResponseEntity.ok(userService.getUserById(jwtService.extractUserName(authorizationHeader.substring(7)), customerId));
     }
 
@@ -46,12 +46,12 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    @Secured({ "ROLE_USER", "ROLE_STAFF" })
-    @DeleteMapping("/{customerId}")
-    public HttpStatus deleteCustomer(@RequestHeader(name = "Authorization") String authorizationHeader,
-                                     @PathVariable Long customerId) {
-        userService.deleteUser(jwtService.extractUserName(authorizationHeader.substring(7)),
-                customerId);
-        return HttpStatus.NO_CONTENT;
-    }
+//    @Secured({ "ROLE_USER", "ROLE_STAFF" })
+//    @DeleteMapping("/{customerId}")
+//    public HttpStatus deleteCustomer(@RequestHeader(name = "Authorization") String authorizationHeader,
+//                                     @PathVariable Long customerId) {
+//        userService.deleteUser(jwtService.extractUserName(authorizationHeader.substring(7)),
+//                customerId);
+//        return HttpStatus.NO_CONTENT;
+//    }
 }

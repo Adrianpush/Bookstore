@@ -14,7 +14,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,12 +29,10 @@ public class OrderServiceImpl implements OrderService {
     private final OrderItemService orderItemService;
 
     @Override
-    public OrderDTO createOrder(String customerEmail, Long customerId, OrderDTO shoppingCart) {
+    public OrderDTO createOrder(String customerEmail, OrderDTO shoppingCart) {
 
-        User user = userRepository.findById(customerId)
+        User user = userRepository.findByEmail(customerEmail)
                 .orElseThrow(() -> new UserNotFoundException("Customer not found"));
-
-        validateRequest(customerEmail, user);
         validateOrder(shoppingCart);
 
         Order order = new Order();
@@ -62,9 +63,17 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderDTO> getAllOrdersByCustomer(String email, Long customerId) {
-        User user = userRepository.findById(customerId)
-                .orElseThrow(() -> new UserNotFoundException("Customer not found"));
-        validateRequest(email, user);
+
+        User user;
+        if (customerId == null) {
+            user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new UserNotFoundException("Customer not found"));
+        } else {
+            user = userRepository.findById(customerId)
+                    .orElseThrow(() -> new UserNotFoundException("Customer not found"));
+            validateRequest(email, user);
+        }
+
         return orderRepository.findAllByUser(user).stream()
                 .map(this::convertToOrderDTO)
                 .toList();
@@ -85,6 +94,22 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new OrderNotFoundException("Order not found"));
         order.getOrderItems().forEach(orderItemService::cancelOrderItem);
         order.setOrderStatus(OrderStatus.CANCELED);
+    }
+
+    @Override
+    public List<String> getBooksBought(String requesterEmail) {
+        User user = userRepository.findByEmail(requesterEmail)
+                .orElseThrow(() -> new UserNotFoundException("Customer not found"));
+
+        List<String> booksTitles = new ArrayList<>();
+        orderRepository.findAllByUser(user).stream()
+                .map(Order::getOrderItems)
+                .flatMap(Collection::stream)
+                .map(OrderItem::getBook)
+                .distinct()
+                .forEach(book -> booksTitles.add(book.getTitle()));
+
+        return booksTitles;
     }
 
     private OrderDTO convertToOrderDTO(Order order) {

@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface OrderService {
 
-    OrderDTO createOrder(String email, Long customerId, OrderDTO shoppingCart);
+    OrderDTO createOrder(String email, OrderDTO shoppingCart);
 
     OrderDTO getOrderById(String email, Long orderId);
 
@@ -17,4 +17,6 @@ public interface OrderService {
     OrderDTO markOrderCompleted(Long orderId);
 
     void cancelOrder(Long orderId);
+
+    List<String> getBooksBought(String requesterEmail);
 }

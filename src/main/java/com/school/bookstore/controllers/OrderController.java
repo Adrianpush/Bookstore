@@ -22,12 +22,11 @@ public class OrderController {
     private final JwtService jwtService;
 
     @Secured("ROLE_USER")
-    @PostMapping("customers/{customerId}")
+    @PostMapping()
     public ResponseEntity<OrderDTO> createOrder(
             @RequestHeader(name = "Authorization") String authorizationHeader,
-            @PathVariable Long customerId,
             @Valid @RequestBody OrderDTO shoppingCart) {
-        return ResponseEntity.ok(orderService.createOrder(jwtService.extractUserName(authorizationHeader.substring(7)),customerId, shoppingCart));
+        return ResponseEntity.ok(orderService.createOrder(jwtService.extractUserName(authorizationHeader.substring(7)), shoppingCart));
     }
 
     @Secured("ROLE_STAFF")
@@ -39,8 +38,10 @@ public class OrderController {
     @Secured({ "ROLE_USER", "ROLE_STAFF" })
     @GetMapping("customers/{customerId}")
     public ResponseEntity<List<OrderDTO>> getAllOrdersByCustomer(@RequestHeader(name = "Authorization") String authorizationHeader,
-                                                                 @PathVariable Long customerId) {
-        return ResponseEntity.ok(orderService.getAllOrdersByCustomer(jwtService.extractUserName(authorizationHeader.substring(7)), customerId));
+                                                                 @PathVariable(required = false) Long customerId) {
+        return ResponseEntity.ok(orderService.getAllOrdersByCustomer(
+                jwtService.extractUserName(authorizationHeader.substring(7)), customerId)
+        );
     }
 
     @Secured({ "ROLE_USER", "ROLE_STAFF" })

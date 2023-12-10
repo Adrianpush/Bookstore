@@ -45,6 +45,12 @@ public class BookController {
         return ResponseEntity.ok(bookService.getBooks(searchString, genre, language));
     }
 
+//    @GetMapping("/recommendations")
+//    @Secured("ROLE_USER")
+//    public ResponseEntity<String> getRecommendations(@RequestHeader(name = "Authorization") String authorizationHeader) {
+//
+//    }
+
     @Secured("ROLE_STAFF")
     @PutMapping("/{bookId}")
     public ResponseEntity<BookDTO> updateBook(@PathVariable Long bookId, @RequestBody @Valid BookDTO bookDTO) {

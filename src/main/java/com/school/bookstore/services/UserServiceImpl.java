@@ -3,9 +3,9 @@ package com.school.bookstore.services;
 import com.school.bookstore.exceptions.AuthentificationException;
 import com.school.bookstore.exceptions.UserCreateException;
 import com.school.bookstore.models.dtos.UserDTO;
+import com.school.bookstore.models.entities.Order;
 import com.school.bookstore.models.entities.Role;
 import com.school.bookstore.models.entities.User;
-import com.school.bookstore.models.entities.Order;
 import com.school.bookstore.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -44,9 +44,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO getUserById(String requesterEmail, Long requestedId) {
-        User user = userRepository.findById(requestedId)
-                .orElseThrow(() -> new UsernameNotFoundException("User with id " + requestedId + " not found"));
-        validateRequest(requesterEmail, user);
+        User user;
+        if (requestedId == null) {
+            user = userRepository.findByEmail(requesterEmail)
+                    .orElseThrow(() -> new UsernameNotFoundException("User with id " + requestedId + " not found"));
+        } else {
+            user = userRepository.findById(requestedId)
+                    .orElseThrow(() -> new UsernameNotFoundException("User with id " + requestedId + " not found"));
+            validateRequest(requesterEmail, user);
+        }
 
         return convertToUserDTO(user);
     }

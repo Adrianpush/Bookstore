@@ -19,7 +19,6 @@ public class BookDTO {
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
 
-
     @Size(min = 2, message = "{validation.title.size.too_short}")
     @Size(max = 200, message = "{validation.title.size.too_long}")
     @NotBlank(message = "Field must not be blank")
