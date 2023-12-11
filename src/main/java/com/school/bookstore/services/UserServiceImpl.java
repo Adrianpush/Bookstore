@@ -6,6 +6,7 @@ import com.school.bookstore.models.dtos.UserDTO;
 import com.school.bookstore.models.entities.User;
 import com.school.bookstore.models.enums.Role;
 import com.school.bookstore.repositories.UserRepository;
+import com.school.bookstore.services.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

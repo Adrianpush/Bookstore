@@ -1,7 +1,7 @@
 package com.school.bookstore.filters;
 
-import com.school.bookstore.services.JwtService;
-import com.school.bookstore.services.UserService;
+import com.school.bookstore.services.interfaces.JwtService;
+import com.school.bookstore.services.interfaces.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,7 +1,7 @@
 package com.school.bookstore.config;
 
 import com.school.bookstore.filters.JwtAuthenticationFilter;
-import com.school.bookstore.services.UserService;
+import com.school.bookstore.services.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

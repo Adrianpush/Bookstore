@@ -1,6 +1,7 @@
 package com.school.bookstore.services;
 
 import com.school.bookstore.exceptions.book.ImageUploadException;
+import com.school.bookstore.services.interfaces.ImageUploadService;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.springframework.beans.factory.annotation.Value;

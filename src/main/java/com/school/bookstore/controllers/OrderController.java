@@ -1,8 +1,8 @@
 package com.school.bookstore.controllers;
 
 import com.school.bookstore.models.dtos.OrderDTO;
-import com.school.bookstore.services.JwtService;
-import com.school.bookstore.services.OrderService;
+import com.school.bookstore.services.interfaces.JwtService;
+import com.school.bookstore.services.interfaces.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

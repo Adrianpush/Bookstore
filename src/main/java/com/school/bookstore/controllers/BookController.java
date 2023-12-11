@@ -1,7 +1,7 @@
 package com.school.bookstore.controllers;
 
 import com.school.bookstore.models.dtos.BookDTO;
-import com.school.bookstore.services.BookService;
+import com.school.bookstore.services.interfaces.BookService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

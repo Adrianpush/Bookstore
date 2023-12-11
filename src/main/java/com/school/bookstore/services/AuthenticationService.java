@@ -4,6 +4,7 @@ import com.school.bookstore.models.dtos.JwtAuthenticationResponseDTO;
 import com.school.bookstore.models.dtos.SignInRequestDTO;
 import com.school.bookstore.models.entities.User;
 import com.school.bookstore.repositories.UserRepository;
+import com.school.bookstore.services.interfaces.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

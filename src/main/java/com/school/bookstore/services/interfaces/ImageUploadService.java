@@ -1,4 +1,4 @@
-package com.school.bookstore.services;
+package com.school.bookstore.services.interfaces;
 
 import org.springframework.web.multipart.MultipartFile;
 

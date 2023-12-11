@@ -1,8 +1,8 @@
 package com.school.bookstore.controllers;
 
 import com.school.bookstore.models.dtos.BookDTO;
-import com.school.bookstore.services.JwtService;
-import com.school.bookstore.services.RecommendationService;
+import com.school.bookstore.services.interfaces.JwtService;
+import com.school.bookstore.services.interfaces.RecommendationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;

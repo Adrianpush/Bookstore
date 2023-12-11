@@ -7,6 +7,7 @@ import com.school.bookstore.models.entities.Book;
 import com.school.bookstore.models.entities.Order;
 import com.school.bookstore.models.entities.OrderItem;
 import com.school.bookstore.repositories.BookRepository;
+import com.school.bookstore.services.interfaces.OrderItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

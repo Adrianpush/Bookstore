@@ -1,7 +1,7 @@
 package com.school.bookstore.controllers;
 
 import com.school.bookstore.models.dtos.GenreTagDTO;
-import com.school.bookstore.services.GenreTagService;
+import com.school.bookstore.services.interfaces.GenreTagService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

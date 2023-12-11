@@ -4,6 +4,7 @@ import com.school.bookstore.exceptions.users.AuthorNotFoundException;
 import com.school.bookstore.models.dtos.AuthorDTO;
 import com.school.bookstore.models.entities.Author;
 import com.school.bookstore.repositories.AuthorRepository;
+import com.school.bookstore.services.interfaces.AuthorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -3,6 +3,7 @@ package com.school.bookstore.services;
 import com.school.bookstore.models.dtos.GenreTagDTO;
 import com.school.bookstore.models.entities.GenreTag;
 import com.school.bookstore.repositories.GenreTagRepository;
+import com.school.bookstore.services.interfaces.GenreTagService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

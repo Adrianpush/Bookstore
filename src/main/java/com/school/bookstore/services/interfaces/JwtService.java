@@ -1,4 +1,4 @@
-package com.school.bookstore.services;
+package com.school.bookstore.services.interfaces;
 
 import io.jsonwebtoken.Claims;
 import org.springframework.security.core.userdetails.UserDetails;

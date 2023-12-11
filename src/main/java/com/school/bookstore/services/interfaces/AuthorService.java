@@ -1,4 +1,4 @@
-package com.school.bookstore.services;
+package com.school.bookstore.services.interfaces;
 
 import com.school.bookstore.models.dtos.AuthorDTO;
 import com.school.bookstore.models.entities.Author;

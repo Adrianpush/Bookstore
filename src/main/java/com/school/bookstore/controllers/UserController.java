@@ -1,8 +1,8 @@
 package com.school.bookstore.controllers;
 
 import com.school.bookstore.models.dtos.UserDTO;
-import com.school.bookstore.services.JwtService;
-import com.school.bookstore.services.UserService;
+import com.school.bookstore.services.interfaces.JwtService;
+import com.school.bookstore.services.interfaces.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

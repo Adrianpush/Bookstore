@@ -2,7 +2,7 @@ package com.school.bookstore.controllers;
 
 
 import com.school.bookstore.models.dtos.AuthorDTO;
-import com.school.bookstore.services.AuthorService;
+import com.school.bookstore.services.interfaces.AuthorService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
