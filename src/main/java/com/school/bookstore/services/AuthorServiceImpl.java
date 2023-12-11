@@ -1,10 +1,9 @@
 package com.school.bookstore.services;
 
-import com.school.bookstore.exceptions.AuthorNotFoundException;
+import com.school.bookstore.exceptions.users.AuthorNotFoundException;
 import com.school.bookstore.models.dtos.AuthorDTO;
 import com.school.bookstore.models.entities.Author;
 import com.school.bookstore.repositories.AuthorRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +18,7 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public AuthorDTO getAuthorById(Long id) {
-        Author author =  authorRepository.findById(id)
+        Author author = authorRepository.findById(id)
                 .orElseThrow(() -> new AuthorNotFoundException("Author not found"));
         AuthorDTO authorDTO = new AuthorDTO();
         authorDTO.setId(author.getId());
@@ -42,7 +41,7 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public AuthorDTO updateAuthor(Long id, AuthorDTO authorDTO) {
-        Author author =  authorRepository.findById(id)
+        Author author = authorRepository.findById(id)
                 .orElseThrow(() -> new AuthorNotFoundException("Author not found"));
         author.setAuthorInformation(authorDTO.getAuthorInfo());
         author = authorRepository.save(author);
@@ -65,6 +64,4 @@ public class AuthorServiceImpl implements AuthorService {
     public Optional<Author> getAuthorByName(String authorFullName) {
         return authorRepository.findByFullName(authorFullName);
     }
-
-
 }

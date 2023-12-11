@@ -1,6 +1,6 @@
 package com.school.bookstore.services;
 
-import com.school.bookstore.exceptions.ImageUploadException;
+import com.school.bookstore.exceptions.book.ImageUploadException;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +21,7 @@ public class ImageUploadServiceImpl implements ImageUploadService {
     private final String apiKey;
     private final OkHttpClient client;
     private final String imageBaseUrl;
+    private final static String FAILED_UPLOAD = "Unable to upload file";
 
     public ImageUploadServiceImpl(@Value("${supabase.apikey}") String apiKey, @Value("${image.urlBase}") String imageBaseUrl) {
         this.imageBaseUrl = imageBaseUrl;
@@ -28,6 +29,20 @@ public class ImageUploadServiceImpl implements ImageUploadService {
         this.projectId = "dkckcusqogzbwetnizwe";
         this.bucketName = "books";
         this.apiKey = apiKey;
+    }
+
+    private static boolean isJPEG(MultipartFile file) {
+        try {
+            BufferedImage image = ImageIO.read(file.getInputStream());
+            return image != null && "jpeg".equalsIgnoreCase(Objects.requireNonNull(file.getContentType()).split("/")[1]);
+        } catch (IOException e) {
+            log.info(FAILED_UPLOAD);
+        }
+        return false;
+    }
+
+    private static boolean isUnderSizeLimit(MultipartFile file, long sizeLimitKB) {
+        return file.getSize() <= sizeLimitKB * 1024;
     }
 
     @Override
@@ -39,10 +54,11 @@ public class ImageUploadServiceImpl implements ImageUploadService {
                     .setType(MultipartBody.FORM)
                     .addFormDataPart("file", fileName,
                             RequestBody.create(
-                                    MediaType.parse(Objects.requireNonNull(multipartFile.getContentType())), multipartFile.getBytes()))
+                                    multipartFile.getBytes(),
+                                    MediaType.parse(Objects.requireNonNull(multipartFile.getContentType()))))
                     .build();
         } catch (IOException e) {
-            throw new ImageUploadException("Unable to upload file");
+            throw new ImageUploadException(FAILED_UPLOAD);
         }
 
         Request request = new Request.Builder()
@@ -53,7 +69,7 @@ public class ImageUploadServiceImpl implements ImageUploadService {
         try (Response response = client.newCall(request).execute()) {
             return imageBaseUrl.concat(fileName);
         } catch (IOException e) {
-            throw new ImageUploadException("Unable to upload file");
+            throw new ImageUploadException(FAILED_UPLOAD);
         }
     }
 
@@ -65,10 +81,11 @@ public class ImageUploadServiceImpl implements ImageUploadService {
             requestBody = new MultipartBody.Builder()
                     .setType(MultipartBody.FORM)
                     .addFormDataPart("file", fileName,
-                            RequestBody.create(MediaType.parse(Objects.requireNonNull(multipartFile.getContentType())), multipartFile.getBytes()))
+                            RequestBody.create(multipartFile.getBytes(),
+                                    MediaType.parse(Objects.requireNonNull(multipartFile.getContentType()))                            ))
                     .build();
         } catch (IOException e) {
-            throw new ImageUploadException("Unable to upload file");
+            throw new ImageUploadException(FAILED_UPLOAD);
         }
 
         Request request = new Request.Builder()
@@ -76,32 +93,17 @@ public class ImageUploadServiceImpl implements ImageUploadService {
                 .addHeader("Authorization", "Bearer " + apiKey)
                 .put(requestBody)
                 .build();
-        log.info("sending request");
+
         try (Response response = client.newCall(request).execute()) {
-            log.info("request successful");
             return imageBaseUrl.concat(fileName);
         } catch (IOException e) {
-            throw new ImageUploadException("Unable to upload file");
+            throw new ImageUploadException(FAILED_UPLOAD);
         }
     }
 
     private void verifyFile(MultipartFile file) {
         if (!isJPEG(file) || !isUnderSizeLimit(file, 1000)) {
-            throw new ImageUploadException("Unable to upload file");
+            throw new ImageUploadException("Wrong format or size to large.");
         }
-    }
-
-    private static boolean isJPEG(MultipartFile file) {
-        try {
-            BufferedImage image = ImageIO.read(file.getInputStream());
-            return image != null && "jpeg".equalsIgnoreCase(Objects.requireNonNull(file.getContentType()).split("/")[1]);
-        } catch (IOException e) {
-            log.info("File upload failed");
-        }
-        return false;
-    }
-
-    private static boolean isUnderSizeLimit(MultipartFile file, long sizeLimitKB) {
-        return file.getSize() <= sizeLimitKB * 1024;
     }
 }

@@ -1,11 +1,12 @@
 package com.school.bookstore.controllers;
 
 import com.school.bookstore.models.dtos.OrderDTO;
-import com.school.bookstore.models.entities.Order;
+import com.school.bookstore.services.JwtService;
 import com.school.bookstore.services.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,23 +19,35 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
-    @PostMapping("customers/{customerId}")
-    public ResponseEntity<OrderDTO> createOrder(@PathVariable Long customerId, @Valid @RequestBody OrderDTO shoppingCart) {
-        return ResponseEntity.ok(orderService.createOrder(customerId, shoppingCart));
+    private final JwtService jwtService;
+
+    @Secured("ROLE_USER")
+    @PostMapping()
+    public ResponseEntity<OrderDTO> createOrder(
+            @RequestHeader(name = "Authorization") String authorizationHeader,
+            @Valid @RequestBody OrderDTO shoppingCart) {
+        return ResponseEntity.ok(orderService.createOrder(jwtService.extractUserName(authorizationHeader.substring(7)), shoppingCart));
     }
 
+    @Secured("ROLE_STAFF")
     @GetMapping()
     public ResponseEntity<List<OrderDTO>> getAllOrders() {
         return ResponseEntity.ok(orderService.getALlOrders());
     }
 
+    @Secured({"ROLE_USER", "ROLE_STAFF"})
     @GetMapping("customers/{customerId}")
-    public ResponseEntity<List<OrderDTO>> getAllOrdersByCustomer(@PathVariable Long customerId) {
-        return ResponseEntity.ok(orderService.getAllOrdersByCustomer(customerId));
+    public ResponseEntity<List<OrderDTO>> getAllOrdersByCustomer(@RequestHeader(name = "Authorization") String authorizationHeader,
+                                                                 @PathVariable(required = false) Long customerId) {
+        return ResponseEntity.ok(orderService.getAllOrdersByCustomer(
+                jwtService.extractUserName(authorizationHeader.substring(7)), customerId)
+        );
     }
 
+    @Secured({"ROLE_USER", "ROLE_STAFF"})
     @GetMapping("/{orderId}")
-    public ResponseEntity<OrderDTO> getOrderByOrderId(@PathVariable Long orderId) {
-        return ResponseEntity.ok(orderService.getOrderById(orderId));
+    public ResponseEntity<OrderDTO> getOrderByOrderId(@RequestHeader(name = "Authorization") String authorizationHeader,
+                                                      @PathVariable Long orderId) {
+        return ResponseEntity.ok(orderService.getOrderById(jwtService.extractUserName(authorizationHeader.substring(7)), orderId));
     }
 }

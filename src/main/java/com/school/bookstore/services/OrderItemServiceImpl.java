@@ -1,22 +1,20 @@
 package com.school.bookstore.services;
 
-import com.school.bookstore.exceptions.BookNotFoundException;
-import com.school.bookstore.exceptions.OrderCreateException;
+import com.school.bookstore.exceptions.book.BookNotFoundException;
+import com.school.bookstore.exceptions.order.OrderCreateException;
 import com.school.bookstore.models.dtos.OrderItemDTO;
 import com.school.bookstore.models.entities.Book;
 import com.school.bookstore.models.entities.Order;
 import com.school.bookstore.models.entities.OrderItem;
 import com.school.bookstore.repositories.BookRepository;
-import com.school.bookstore.repositories.OrderItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class OrderItemServiceImpl implements OrderItemService{
+public class OrderItemServiceImpl implements OrderItemService {
 
     private final BookRepository bookRepository;
-
 
     @Override
     public void validateOrderItemDTO(OrderItemDTO orderItemDTO) {
@@ -29,7 +27,6 @@ public class OrderItemServiceImpl implements OrderItemService{
 
     @Override
     public OrderItem createOrderItem(OrderItemDTO orderItemDTO, Order order) {
-
         Book book = bookRepository.findById(orderItemDTO.getBookId())
                 .orElseThrow(() -> new BookNotFoundException("Book not found"));
 

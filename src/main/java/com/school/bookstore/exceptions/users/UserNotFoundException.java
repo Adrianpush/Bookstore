@@ -1,4 +1,4 @@
-package com.school.bookstore.exceptions;
+package com.school.bookstore.exceptions.users;
 
 public class UserNotFoundException extends RuntimeException {
 

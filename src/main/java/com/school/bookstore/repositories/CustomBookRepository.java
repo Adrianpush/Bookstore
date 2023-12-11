@@ -1,11 +1,10 @@
 package com.school.bookstore.repositories;
 
 import com.school.bookstore.models.entities.Book;
-import com.school.bookstore.models.entities.Language;
+import com.school.bookstore.models.enums.Language;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface CustomBookRepository {

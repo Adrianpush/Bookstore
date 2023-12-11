@@ -2,11 +2,19 @@ package com.school.bookstore.exceptions;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.school.bookstore.exceptions.book.BookCreateException;
+import com.school.bookstore.exceptions.book.BookNotFoundException;
+import com.school.bookstore.exceptions.book.ImageUploadException;
+import com.school.bookstore.exceptions.book.RecommendationException;
+import com.school.bookstore.exceptions.order.OrderCreateException;
+import com.school.bookstore.exceptions.order.OrderNotFoundException;
+import com.school.bookstore.exceptions.users.AuthentificationException;
+import com.school.bookstore.exceptions.users.AuthorNotFoundException;
+import com.school.bookstore.exceptions.users.UserCreateException;
+import com.school.bookstore.exceptions.users.UserNotFoundException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -57,16 +65,6 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
                 Map.of("message", bookNotFoundException.getMessage())), NOT_FOUND);
     }
 
-    @ExceptionHandler(CustomerCreateException.class)
-    public ResponseEntity<String> customerCreateException(CustomerCreateException customerCreateException) {
-        return  new ResponseEntity<>(objectToString(Map.of("message", customerCreateException.getMessage())), BAD_REQUEST);
-    }
-
-    @ExceptionHandler(CustomerNotFoundException.class)
-    public ResponseEntity<String> customerNotFoundException(CustomerNotFoundException customerNotFoundException) {
-        return new ResponseEntity<>(objectToString(Map.of("message", customerNotFoundException)), NOT_FOUND);
-    }
-
     @ExceptionHandler(ImageUploadException.class)
     public ResponseEntity<String> imageUploadException(ImageUploadException imageUploadException) {
         return new ResponseEntity<>(objectToString(Map.of("message", imageUploadException)), SERVICE_UNAVAILABLE);
@@ -85,6 +83,16 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
     @ExceptionHandler(OrderNotFoundException.class)
     public ResponseEntity<String> orderNotFoundException(OrderCreateException orderNotFoundException) {
         return new ResponseEntity<>(objectToString(Map.of("message", orderNotFoundException)), NOT_FOUND);
+    }
+
+    @ExceptionHandler(AuthentificationException.class)
+    public ResponseEntity<String> authenticationException(AuthentificationException authentificationException) {
+        return new ResponseEntity<>(objectToString(Map.of("message", authentificationException)), FORBIDDEN);
+    }
+
+    @ExceptionHandler(RecommendationException.class)
+    public ResponseEntity<String> recommendationException(RecommendationException recommendationException) {
+        return new ResponseEntity<>(objectToString(Map.of("message", recommendationException)), SERVICE_UNAVAILABLE);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)

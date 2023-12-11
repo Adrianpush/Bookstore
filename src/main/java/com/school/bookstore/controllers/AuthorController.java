@@ -4,9 +4,9 @@ package com.school.bookstore.controllers;
 import com.school.bookstore.models.dtos.AuthorDTO;
 import com.school.bookstore.services.AuthorService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,9 +29,9 @@ public class AuthorController {
         return ResponseEntity.ok(authorService.getAllAuthors());
     }
 
+    @Secured("ROLE_STAFF")
     @PutMapping("/{id}")
     public ResponseEntity<AuthorDTO> addInformation(@PathVariable Long id, @RequestBody AuthorDTO authorDTO) {
         return ResponseEntity.ok(authorService.updateAuthor(id, authorDTO));
     }
 }
-

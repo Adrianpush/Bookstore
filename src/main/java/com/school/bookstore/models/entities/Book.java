@@ -1,8 +1,10 @@
 package com.school.bookstore.models.entities;
 
+import com.school.bookstore.models.enums.Language;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.Set;
 
 @Builder
@@ -12,10 +14,10 @@ import java.util.Set;
 @Getter
 @Entity
 @Table(name = "books")
-public class Book {
+public class Book implements Serializable {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "title")
