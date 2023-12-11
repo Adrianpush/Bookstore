@@ -37,8 +37,6 @@ public class UserServiceImpl implements UserService {
                 .role(Role.ROLE_USER)
                 .build();
 
-
-
         user = save(user);
         log.info(String.valueOf(user.getId()));
         return convertToUserDTO(user);
