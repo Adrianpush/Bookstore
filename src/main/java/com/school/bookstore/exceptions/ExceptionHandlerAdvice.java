@@ -2,10 +2,7 @@ package com.school.bookstore.exceptions;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.school.bookstore.exceptions.book.BookCreateException;
-import com.school.bookstore.exceptions.book.BookNotFoundException;
-import com.school.bookstore.exceptions.book.ImageUploadException;
-import com.school.bookstore.exceptions.book.RecommendationException;
+import com.school.bookstore.exceptions.book.*;
 import com.school.bookstore.exceptions.order.OrderCreateException;
 import com.school.bookstore.exceptions.order.OrderNotFoundException;
 import com.school.bookstore.exceptions.users.AuthentificationException;
@@ -73,6 +70,11 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
     @ExceptionHandler(AuthorNotFoundException.class)
     public ResponseEntity<String> authorNotFoundException(AuthorNotFoundException authorNotFoundException) {
         return new ResponseEntity<>(objectToString(Map.of("message", authorNotFoundException)), NOT_FOUND);
+    }
+
+    @ExceptionHandler(GenreTagNotFoundException.class)
+    public ResponseEntity<String> genreTagNotFoundException(GenreTagNotFoundException genreTagNotFoundException) {
+        return new ResponseEntity<>(objectToString(Map.of("message", genreTagNotFoundException)), NOT_FOUND);
     }
 
     @ExceptionHandler(OrderCreateException.class)

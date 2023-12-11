@@ -1,5 +1,6 @@
 package com.school.bookstore.services;
 
+import com.school.bookstore.exceptions.book.GenreTagNotFoundException;
 import com.school.bookstore.models.dtos.GenreTagDTO;
 import com.school.bookstore.models.entities.GenreTag;
 import com.school.bookstore.repositories.GenreTagRepository;
@@ -25,6 +26,25 @@ public class GenreTagServiceImpl implements GenreTagService {
                         .id(genreTag.getId())
                         .build())
                 .toList();
+    }
+
+    @Override
+    public GenreTagDTO getTagById(Long genreTagId) {
+        GenreTag genreTag = genreTagRepository.findById(genreTagId)
+                .orElseThrow(() -> new GenreTagNotFoundException("No genre tag with id " + genreTagId));
+        return new GenreTagDTO(genreTag.getId(), genreTag.getGenre());
+    }
+
+    @Override
+    public GenreTagDTO updateGenreTag(Long genreTagId, GenreTagDTO genreTagDTO) {
+        if (genreTagRepository.existsById(genreTagId)) {
+            GenreTag updatedGenreTag = new GenreTag();
+            updatedGenreTag.setId(genreTagId);
+            updatedGenreTag.setGenre(genreTagDTO.getGenre());
+            updatedGenreTag = genreTagRepository.save(updatedGenreTag);
+            return new GenreTagDTO(updatedGenreTag.getId(), updatedGenreTag.getGenre());
+        }
+        throw new GenreTagNotFoundException("No genre tag with id " + genreTagId);
     }
 
     @Override

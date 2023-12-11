@@ -13,4 +13,8 @@ public interface GenreTagService {
     Optional<GenreTag> getGenreTag(String genreName);
 
     List<GenreTagDTO> getAllGenreTags();
+
+    GenreTagDTO getTagById(Long genreTagId);
+
+    GenreTagDTO updateGenreTag(Long genreTagId, GenreTagDTO genreTagDTO);
 }

@@ -8,6 +8,7 @@ import com.school.bookstore.models.enums.Role;
 import com.school.bookstore.repositories.UserRepository;
 import com.school.bookstore.services.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,8 +16,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
+@Slf4j
 @RequiredArgsConstructor
+@Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -35,8 +37,10 @@ public class UserServiceImpl implements UserService {
                 .role(Role.ROLE_USER)
                 .build();
 
-        user = save(user);
 
+
+        user = save(user);
+        log.info(String.valueOf(user.getId()));
         return convertToUserDTO(user);
     }
 
