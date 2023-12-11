@@ -1,4 +1,4 @@
-package com.school.bookstore.services;
+package com.school.bookstore.services.implementations;
 
 import com.school.bookstore.exceptions.users.AuthentificationException;
 import com.school.bookstore.exceptions.users.UserCreateException;
@@ -69,7 +69,18 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("User with id " + id + " not found"));
         validateRequest(requesterEmail, user);
-        userRepository.delete(user);
+
+        User anon = User.builder()
+                .id(user.getId())
+                .orderHistory(user.getOrderHistory())
+                .email("anon" + user.getId() + "@anon.anon")
+                .fullName("anon")
+                .address("anon")
+                .password("anon")
+                .role(Role.ROLE_EXPIRED)
+                .build();
+
+        userRepository.save(anon);
     }
 
     @Override

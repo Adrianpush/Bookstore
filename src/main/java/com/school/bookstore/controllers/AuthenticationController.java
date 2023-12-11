@@ -2,7 +2,7 @@ package com.school.bookstore.controllers;
 
 import com.school.bookstore.models.dtos.JwtAuthenticationResponseDTO;
 import com.school.bookstore.models.dtos.SignInRequestDTO;
-import com.school.bookstore.services.AuthenticationService;
+import com.school.bookstore.services.implementations.AuthenticationServiceImpl;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class AuthenticationController {
 
-    private final AuthenticationService authenticationService;
+    private final AuthenticationServiceImpl authenticationServiceImpl;
 
     @PostMapping
     ResponseEntity<JwtAuthenticationResponseDTO> signIn(@Valid @RequestBody SignInRequestDTO signInRequestDTO) {
-        return ResponseEntity.ok(authenticationService.signIn(signInRequestDTO));
+        return ResponseEntity.ok(authenticationServiceImpl.signIn(signInRequestDTO));
     }
 }

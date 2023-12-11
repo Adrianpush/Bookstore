@@ -1,8 +1,9 @@
-package com.school.bookstore.services;
+package com.school.bookstore.services.implementations;
 
 import com.school.bookstore.exceptions.order.OrderNotFoundException;
 import com.school.bookstore.exceptions.users.AuthentificationException;
 import com.school.bookstore.exceptions.users.UserNotFoundException;
+import com.school.bookstore.models.dtos.EmailDTO;
 import com.school.bookstore.models.dtos.OrderDTO;
 import com.school.bookstore.models.dtos.OrderItemDTO;
 import com.school.bookstore.models.entities.Book;
@@ -13,6 +14,7 @@ import com.school.bookstore.models.enums.OrderStatus;
 import com.school.bookstore.models.enums.Role;
 import com.school.bookstore.repositories.OrderRepository;
 import com.school.bookstore.repositories.UserRepository;
+import com.school.bookstore.services.interfaces.EmailService;
 import com.school.bookstore.services.interfaces.OrderItemService;
 import com.school.bookstore.services.interfaces.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +34,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final OrderItemService orderItemService;
+    private final EmailService emailService;
 
     @Override
     public OrderDTO createOrder(String customerEmail, OrderDTO shoppingCart) {

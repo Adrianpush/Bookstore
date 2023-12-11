@@ -1,4 +1,4 @@
-package com.school.bookstore.services;
+package com.school.bookstore.services.implementations;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.school.bookstore.exceptions.book.RecommendationException;

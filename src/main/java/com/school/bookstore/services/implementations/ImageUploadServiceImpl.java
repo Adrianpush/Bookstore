@@ -1,4 +1,4 @@
-package com.school.bookstore.services;
+package com.school.bookstore.services.implementations;
 
 import com.school.bookstore.exceptions.book.ImageUploadException;
 import com.school.bookstore.services.interfaces.ImageUploadService;

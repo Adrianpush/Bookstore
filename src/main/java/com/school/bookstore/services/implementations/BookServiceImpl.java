@@ -1,4 +1,4 @@
-package com.school.bookstore.services;
+package com.school.bookstore.services.implementations;
 
 import com.school.bookstore.exceptions.book.BookCreateException;
 import com.school.bookstore.exceptions.book.BookDeleteException;
@@ -68,14 +68,22 @@ public class BookServiceImpl implements BookService {
         Book bookToBeModified = bookRepository.findById(bookId)
                 .orElseThrow(() -> new BookNotFoundException(BOOK_NOT_FOUND_MESSAGE.formatted(bookId)));
 
-        if (!(bookToBeModified.getPublisher().equals(bookDTO.getPublisher()) &&
+        if (!(bookToBeModified.getPublisher().equals(bookDTO.getPublisher()) ||
                 bookToBeModified.getTitle().equals(bookDTO.getTitle()))) {
             checkForDuplicate(bookDTO);
         }
+
+        Set<Author> authors = bookToBeModified.getAuthors();
+        Set<GenreTag> genreTagSet = bookToBeModified.getGenreTagSet();
+
         Book updatedBook = convertToBookEntity(bookDTO);
         updatedBook.setId(bookToBeModified.getId());
         updatedBook.setImageLink(bookToBeModified.getImageLink());
         updatedBook = bookRepository.save(updatedBook);
+
+        deleteAuthorsIfOrphan(authors);
+        deleteGenreTagsIfOrphan(genreTagSet);
+
         return convertToBookDTO(updatedBook);
     }
 

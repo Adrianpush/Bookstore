@@ -1,4 +1,4 @@
-package com.school.bookstore.services;
+package com.school.bookstore.services.implementations;
 
 import com.school.bookstore.exceptions.book.BookNotFoundException;
 import com.school.bookstore.exceptions.order.OrderCreateException;

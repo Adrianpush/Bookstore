@@ -6,6 +6,7 @@ import com.school.bookstore.services.interfaces.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;
@@ -42,12 +43,12 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-//    @Secured({ "ROLE_USER", "ROLE_STAFF" })
-//    @DeleteMapping("/{customerId}")
-//    public HttpStatus deleteCustomer(@RequestHeader(name = "Authorization") String authorizationHeader,
-//                                     @PathVariable Long customerId) {
-//        userService.deleteUser(jwtService.extractUserName(authorizationHeader.substring(7)),
-//                customerId);
-//        return HttpStatus.NO_CONTENT;
-//    }
+    @Secured({ "ROLE_USER", "ROLE_STAFF" })
+    @DeleteMapping("/{customerId}")
+    public HttpStatus deleteCustomer(@RequestHeader(name = "Authorization") String authorizationHeader,
+                                     @PathVariable Long customerId) {
+        userService.deleteUser(jwtService.extractUserName(authorizationHeader.substring(7)),
+                customerId);
+        return HttpStatus.NO_CONTENT;
+    }
 }

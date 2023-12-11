@@ -1,4 +1,4 @@
-package com.school.bookstore.services;
+package com.school.bookstore.services.implementations;
 
 import com.school.bookstore.models.dtos.JwtAuthenticationResponseDTO;
 import com.school.bookstore.models.dtos.SignInRequestDTO;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class AuthenticationService {
+public class AuthenticationServiceImpl {
 
     private final UserRepository userRepository;
     private final JwtService jwtService;
