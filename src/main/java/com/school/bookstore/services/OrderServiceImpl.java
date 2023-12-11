@@ -5,6 +5,7 @@ import com.school.bookstore.exceptions.users.AuthentificationException;
 import com.school.bookstore.exceptions.users.UserNotFoundException;
 import com.school.bookstore.models.dtos.OrderDTO;
 import com.school.bookstore.models.dtos.OrderItemDTO;
+import com.school.bookstore.models.entities.Book;
 import com.school.bookstore.models.entities.Order;
 import com.school.bookstore.models.entities.OrderItem;
 import com.school.bookstore.models.entities.User;
@@ -67,7 +68,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderDTO> getAllOrdersByCustomer(String email, Long customerId) {
-
         User user;
         if (customerId == null) {
             user = userRepository.findByEmail(email)
@@ -88,7 +88,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException("Order not found"));
         order.setOrderStatus(OrderStatus.COMPLETED);
-
+        order = orderRepository.save(order);
         return convertToOrderDTO(order);
     }
 
@@ -98,6 +98,7 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new OrderNotFoundException("Order not found"));
         order.getOrderItems().forEach(orderItemService::cancelOrderItem);
         order.setOrderStatus(OrderStatus.CANCELED);
+        orderRepository.save(order);
     }
 
     @Override
@@ -114,6 +115,11 @@ public class OrderServiceImpl implements OrderService {
                 .forEach(book -> booksTitles.add(book.getTitle()));
 
         return booksTitles;
+    }
+
+    @Override
+    public boolean isBookPresentInOrders(Book book) {
+        return orderRepository.existsBookInOrderItems(book);
     }
 
     private OrderDTO convertToOrderDTO(Order order) {

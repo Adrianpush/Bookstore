@@ -59,4 +59,9 @@ public class GenreTagServiceImpl implements GenreTagService {
     public Optional<GenreTag> getGenreTag(String genreName) {
         return genreTagRepository.findByGenre(genreName);
     }
+
+    @Override
+    public void deleteGenreTag(GenreTag genreTag) {
+        genreTagRepository.delete(genreTag);
+    }
 }

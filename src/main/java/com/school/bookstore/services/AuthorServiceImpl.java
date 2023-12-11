@@ -65,4 +65,9 @@ public class AuthorServiceImpl implements AuthorService {
     public Optional<Author> getAuthorByName(String authorFullName) {
         return authorRepository.findByFullName(authorFullName);
     }
+
+    @Override
+    public void deleteAuthor(Author author) {
+        authorRepository.delete(author);
+    }
 }

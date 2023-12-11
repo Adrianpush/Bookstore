@@ -56,6 +56,12 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
                 Map.of("message", bookCreateException.getMessage())), BAD_REQUEST);
     }
 
+    @ExceptionHandler(BookDeleteException.class)
+    public ResponseEntity<String> bookDeleteException(BookDeleteException bookDeleteException) {
+        return new ResponseEntity<>(objectToString(
+                Map.of("message", bookDeleteException.getMessage())), CONFLICT);
+    }
+
     @ExceptionHandler(BookNotFoundException.class)
     public ResponseEntity<String> bookNotFoundException(BookNotFoundException bookNotFoundException) {
         return new ResponseEntity<>(objectToString(

@@ -5,6 +5,7 @@ import com.school.bookstore.services.interfaces.JwtService;
 import com.school.bookstore.services.interfaces.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;
@@ -49,5 +50,18 @@ public class OrderController {
     public ResponseEntity<OrderDTO> getOrderByOrderId(@RequestHeader(name = "Authorization") String authorizationHeader,
                                                       @PathVariable Long orderId) {
         return ResponseEntity.ok(orderService.getOrderById(jwtService.extractUserName(authorizationHeader.substring(7)), orderId));
+    }
+
+    @Secured({"ROLE_STAFF"})
+    @PatchMapping("/{orderId}")
+    public ResponseEntity<OrderDTO> markOrderComplete(@PathVariable Long orderId) {
+            return ResponseEntity.ok(orderService.markOrderCompleted(orderId));
+    }
+
+    @Secured({"ROLE_USER"})
+    @DeleteMapping("/{orderId}")
+    public HttpStatus cancelOrder(@PathVariable Long orderId) {
+        orderService.cancelOrder(orderId);
+        return HttpStatus.NO_CONTENT;
     }
 }

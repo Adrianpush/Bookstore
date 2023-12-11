@@ -11,7 +11,7 @@ import java.io.Serializable;
 public class Author implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
 
     @Column(name = "full_name")

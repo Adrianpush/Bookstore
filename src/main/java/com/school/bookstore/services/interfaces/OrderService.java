@@ -1,6 +1,7 @@
 package com.school.bookstore.services.interfaces;
 
 import com.school.bookstore.models.dtos.OrderDTO;
+import com.school.bookstore.models.entities.Book;
 
 import java.util.List;
 
@@ -19,4 +20,6 @@ public interface OrderService {
     void cancelOrder(Long orderId);
 
     List<String> getBooksBought(String requesterEmail);
+
+    boolean isBookPresentInOrders(Book book);
 }

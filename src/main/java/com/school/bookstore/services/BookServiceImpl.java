@@ -1,6 +1,7 @@
 package com.school.bookstore.services;
 
 import com.school.bookstore.exceptions.book.BookCreateException;
+import com.school.bookstore.exceptions.book.BookDeleteException;
 import com.school.bookstore.exceptions.book.BookNotFoundException;
 import com.school.bookstore.models.dtos.BookDTO;
 import com.school.bookstore.models.entities.Author;
@@ -8,10 +9,7 @@ import com.school.bookstore.models.entities.Book;
 import com.school.bookstore.models.entities.GenreTag;
 import com.school.bookstore.models.enums.Language;
 import com.school.bookstore.repositories.BookRepository;
-import com.school.bookstore.services.interfaces.AuthorService;
-import com.school.bookstore.services.interfaces.BookService;
-import com.school.bookstore.services.interfaces.GenreTagService;
-import com.school.bookstore.services.interfaces.ImageUploadService;
+import com.school.bookstore.services.interfaces.*;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
@@ -32,6 +30,7 @@ public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final AuthorService authorService;
     private final GenreTagService genreTagService;
+    private final OrderService orderService;
     private final ImageUploadService imageUploadService;
 
     @Override
@@ -58,7 +57,6 @@ public class BookServiceImpl implements BookService {
         } catch (NullPointerException | IllegalArgumentException exception) {
             lang = null;
         }
-
         return bookRepository.findBooksByTitleOrAuthorNameAndGenreAndLanguage(searchString, genre, lang)
                 .stream()
                 .map(this::convertToBookDTO)
@@ -83,11 +81,20 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public void deleteBookById(Long bookId) {
-        if (bookRepository.existsById(bookId)) {
-            bookRepository.deleteById(bookId);
-        } else {
-            throw new BookNotFoundException(BOOK_NOT_FOUND_MESSAGE.formatted(bookId));
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new BookNotFoundException(BOOK_NOT_FOUND_MESSAGE.formatted(bookId)));
+
+        if (orderService.isBookPresentInOrders(book)) {
+            throw new BookDeleteException("Cannot delete book as it is present in orders.");
         }
+
+        Set<Author> authors = book.getAuthors();
+        Set<GenreTag> genreTags = book.getGenreTagSet();
+
+        bookRepository.delete(book);
+
+        deleteAuthorsIfOrphan(authors);
+        deleteGenreTagsIfOrphan(genreTags);
     }
 
     @Override
@@ -185,5 +192,17 @@ public class BookServiceImpl implements BookService {
         if (bookOptional.isPresent()) {
             throw new BookCreateException("Book already in database with id: " + bookOptional.get().getId());
         }
+    }
+
+    private void deleteGenreTagsIfOrphan(Set<GenreTag> genreTags) {
+        genreTags.stream()
+                .filter(genreTag -> !bookRepository.existsByGenreTag(genreTag))
+                .forEach(genreTagService::deleteGenreTag);
+    }
+
+    private void deleteAuthorsIfOrphan(Set<Author> authors) {
+        authors.stream()
+                .filter(author -> !bookRepository.existsByAuthor(author))
+                .forEach(authorService::deleteAuthor);
     }
 }

@@ -26,7 +26,7 @@ public class Order implements Serializable {
     LocalDateTime createdAt;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
 
     @ManyToOne

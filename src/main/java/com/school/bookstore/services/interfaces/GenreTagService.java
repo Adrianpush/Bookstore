@@ -17,4 +17,6 @@ public interface GenreTagService {
     GenreTagDTO getTagById(Long genreTagId);
 
     GenreTagDTO updateGenreTag(Long genreTagId, GenreTagDTO genreTagDTO);
+
+    void deleteGenreTag(GenreTag genreTag);
 }
