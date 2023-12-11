@@ -1,17 +1,13 @@
 package com.school.bookstore.controllers;
 
-import com.school.bookstore.models.dtos.JwtAuthenticationResponseDTO;
 import com.school.bookstore.models.dtos.UserDTO;
-import com.school.bookstore.services.AuthenticationService;
 import com.school.bookstore.services.JwtService;
 import com.school.bookstore.services.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +28,7 @@ public class UserController {
         return ResponseEntity.ok(userService.createUser(userDTO));
     }
 
-    @Secured({ "ROLE_USER", "ROLE_STAFF" })
+    @Secured({"ROLE_USER", "ROLE_STAFF"})
     @GetMapping("/{customerId}")
     public ResponseEntity<UserDTO> getCustomerById(
             @RequestHeader(name = "Authorization") String authorizationHeader,

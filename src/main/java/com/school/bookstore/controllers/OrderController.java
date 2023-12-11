@@ -35,7 +35,7 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getALlOrders());
     }
 
-    @Secured({ "ROLE_USER", "ROLE_STAFF" })
+    @Secured({"ROLE_USER", "ROLE_STAFF"})
     @GetMapping("customers/{customerId}")
     public ResponseEntity<List<OrderDTO>> getAllOrdersByCustomer(@RequestHeader(name = "Authorization") String authorizationHeader,
                                                                  @PathVariable(required = false) Long customerId) {
@@ -44,7 +44,7 @@ public class OrderController {
         );
     }
 
-    @Secured({ "ROLE_USER", "ROLE_STAFF" })
+    @Secured({"ROLE_USER", "ROLE_STAFF"})
     @GetMapping("/{orderId}")
     public ResponseEntity<OrderDTO> getOrderByOrderId(@RequestHeader(name = "Authorization") String authorizationHeader,
                                                       @PathVariable Long orderId) {

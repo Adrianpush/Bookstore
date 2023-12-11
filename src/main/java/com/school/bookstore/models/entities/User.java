@@ -1,5 +1,6 @@
 package com.school.bookstore.models.entities;
 
+import com.school.bookstore.models.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,24 +21,30 @@ import java.util.List;
 @NoArgsConstructor
 public class User implements UserDetails {
 
+    @Enumerated(EnumType.STRING)
+    Role role;
+
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(name = "full_name")
     private String fullName;
+
     @Column(name = "password")
     private String password;
+
     @Column(name = "email", unique = true)
     private String email;
+
     @Column(name = "address")
     private String address;
+
     @OneToMany(
             mappedBy = "user",
             fetch = FetchType.LAZY,
             cascade = CascadeType.ALL)
     private List<Order> orderHistory;
-    @Enumerated(EnumType.STRING)
-    Role role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

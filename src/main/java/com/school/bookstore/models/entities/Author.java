@@ -11,10 +11,12 @@ import java.io.Serializable;
 public class Author implements Serializable {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(name = "full_name")
     private String fullName;
+
     @Column(name = "author_information", length = 5000)
     private String authorInformation;
 }

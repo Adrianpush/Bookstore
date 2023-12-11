@@ -11,7 +11,7 @@ import java.io.Serializable;
 public class GenreTag implements Serializable {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "genre")
     private String genre;

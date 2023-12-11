@@ -1,13 +1,17 @@
 package com.school.bookstore.services;
 
-import com.school.bookstore.exceptions.AuthentificationException;
-import com.school.bookstore.exceptions.OrderNotFoundException;
-import com.school.bookstore.exceptions.UserNotFoundException;
+import com.school.bookstore.exceptions.order.OrderNotFoundException;
+import com.school.bookstore.exceptions.users.AuthentificationException;
+import com.school.bookstore.exceptions.users.UserNotFoundException;
 import com.school.bookstore.models.dtos.OrderDTO;
 import com.school.bookstore.models.dtos.OrderItemDTO;
-import com.school.bookstore.models.entities.*;
-import com.school.bookstore.repositories.UserRepository;
+import com.school.bookstore.models.entities.Order;
+import com.school.bookstore.models.entities.OrderItem;
+import com.school.bookstore.models.entities.User;
+import com.school.bookstore.models.enums.OrderStatus;
+import com.school.bookstore.models.enums.Role;
 import com.school.bookstore.repositories.OrderRepository;
+import com.school.bookstore.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,8 +20,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

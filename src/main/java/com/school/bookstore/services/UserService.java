@@ -1,6 +1,5 @@
 package com.school.bookstore.services;
 
-import com.school.bookstore.models.dtos.JwtAuthenticationResponseDTO;
 import com.school.bookstore.models.dtos.UserDTO;
 import com.school.bookstore.models.entities.User;
 import org.springframework.security.core.userdetails.UserDetailsService;

@@ -1,24 +1,25 @@
 package com.school.bookstore.models.dtos;
 
-import com.school.bookstore.models.entities.Message;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class ChatRequestDTO {
+@NoArgsConstructor
+public class ChatRequestDTO implements Serializable {
 
     private String model;
-    private List<Message> messages;
-    private int n;
-    private double temperature;
+    private List<MessageDTO> messages;
+
 
     public ChatRequestDTO(String model, String prompt) {
         this.model = model;
         this.messages = new ArrayList<>();
-        this.messages.add(new Message("user", prompt));
+        this.messages.add(new MessageDTO("user", prompt));
     }
 }

@@ -4,7 +4,6 @@ package com.school.bookstore.controllers;
 import com.school.bookstore.models.dtos.AuthorDTO;
 import com.school.bookstore.services.AuthorService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -36,4 +35,3 @@ public class AuthorController {
         return ResponseEntity.ok(authorService.updateAuthor(id, authorDTO));
     }
 }
-

@@ -18,6 +18,7 @@ import java.util.List;
 public class GenreTagController {
 
     private final GenreTagService genreTagService;
+
     @GetMapping
     public ResponseEntity<List<GenreTagDTO>> getAllGenreTags() {
         return ResponseEntity.ok(genreTagService.getAllGenreTags());

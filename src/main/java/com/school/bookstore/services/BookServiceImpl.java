@@ -1,12 +1,12 @@
 package com.school.bookstore.services;
 
-import com.school.bookstore.exceptions.BookCreateException;
-import com.school.bookstore.exceptions.BookNotFoundException;
+import com.school.bookstore.exceptions.book.BookCreateException;
+import com.school.bookstore.exceptions.book.BookNotFoundException;
 import com.school.bookstore.models.dtos.BookDTO;
 import com.school.bookstore.models.entities.Author;
 import com.school.bookstore.models.entities.Book;
 import com.school.bookstore.models.entities.GenreTag;
-import com.school.bookstore.models.entities.Language;
+import com.school.bookstore.models.enums.Language;
 import com.school.bookstore.repositories.BookRepository;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -22,13 +22,13 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
 
+    private static final String DEFAULT_IMAGE_LINK = "https://dkckcusqogzbwetnizwe.supabase.co" +
+            "/storage/v1/object/public/books/default-book-cover.jpg";
+    private static final String BOOK_NOT_FOUND_MESSAGE = "Database doesn't contain any book with id %s.";
     private final BookRepository bookRepository;
     private final AuthorService authorService;
     private final GenreTagService genreTagService;
     private final ImageUploadService imageUploadService;
-    private static final String DEFAULT_IMAGE_LINK = "https://dkckcusqogzbwetnizwe.supabase.co" +
-            "/storage/v1/object/public/books/default-book-cover.jpg";
-    private static final String BOOK_NOT_FOUND_MESSAGE = "Database doesn't contain any book with id %s.";
 
     @Override
     public BookDTO createBook(BookDTO bookDTO) {
@@ -102,6 +102,7 @@ public class BookServiceImpl implements BookService {
 
         return convertToBookDTO(updatedBook);
     }
+
     private Book convertToBookEntity(BookDTO bookDTO) {
         Set<Author> authors = getAuthors(bookDTO.getAuthorNameList());
         Set<GenreTag> genreTagSet = getGenreTags(bookDTO.getGenreTagList());
@@ -177,7 +178,7 @@ public class BookServiceImpl implements BookService {
 
     private void checkForDuplicate(BookDTO bookDTO) {
         Optional<Book> bookOptional = bookRepository.findByTitleAndPublisher(bookDTO.getTitle(), bookDTO.getPublisher());
-        if(bookOptional.isPresent()) {
+        if (bookOptional.isPresent()) {
             throw new BookCreateException("Book already in database with id: " + bookOptional.get().getId());
         }
     }

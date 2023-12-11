@@ -3,7 +3,7 @@ package com.school.bookstore.repositories;
 import com.school.bookstore.models.entities.Author;
 import com.school.bookstore.models.entities.Book;
 import com.school.bookstore.models.entities.GenreTag;
-import com.school.bookstore.models.entities.Language;
+import com.school.bookstore.models.enums.Language;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;

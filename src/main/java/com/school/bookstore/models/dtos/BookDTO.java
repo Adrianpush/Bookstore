@@ -1,6 +1,6 @@
 package com.school.bookstore.models.dtos;
 
-import com.school.bookstore.models.entities.Language;
+import com.school.bookstore.models.enums.Language;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;

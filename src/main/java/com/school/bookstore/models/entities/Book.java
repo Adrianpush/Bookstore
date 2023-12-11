@@ -1,5 +1,6 @@
 package com.school.bookstore.models.entities;
 
+import com.school.bookstore.models.enums.Language;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,7 +17,7 @@ import java.util.Set;
 public class Book implements Serializable {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "title")

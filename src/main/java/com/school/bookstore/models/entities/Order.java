@@ -1,5 +1,6 @@
 package com.school.bookstore.models.entities;
 
+import com.school.bookstore.models.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,8 +19,14 @@ import java.util.List;
 @Entity
 public class Order implements Serializable {
 
+    @Enumerated(EnumType.STRING)
+    OrderStatus orderStatus;
+
+    @Column(name = "created_at")
+    LocalDateTime createdAt;
+
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
@@ -31,10 +38,4 @@ public class Order implements Serializable {
             fetch = FetchType.EAGER,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<OrderItem> orderItems;
-
-    @Enumerated(EnumType.STRING)
-    OrderStatus orderStatus;
-
-    @Column(name = "created_at")
-    LocalDateTime createdAt;
 }

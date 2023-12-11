@@ -1,4 +1,4 @@
-package com.school.bookstore.models.entities;
+package com.school.bookstore.models.enums;
 
 public enum Language {
 
