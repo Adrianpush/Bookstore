@@ -22,9 +22,9 @@ import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
-public class BookServiceImpl implements BookService {
+public class BookService implements com.school.bookstore.services.interfaces.BookService {
 
-    private static final String DEFAULT_IMAGE_LINK = "https://dkckcusqogzbwetnizwe.supabase.co" +
+    public static final String DEFAULT_IMAGE_LINK = "https://dkckcusqogzbwetnizwe.supabase.co" +
             "/storage/v1/object/public/books/default-book-cover.jpg";
     private static final String BOOK_NOT_FOUND_MESSAGE = "Database doesn't contain any book with id %s.";
     private final BookRepository bookRepository;
