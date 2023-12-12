@@ -45,16 +45,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO getUserById(String requesterEmail, Long requestedId) {
-        User user;
-        if (requestedId == null) {
-            user = userRepository.findByEmail(requesterEmail)
-                    .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND.formatted(requesterEmail)));
-        } else {
-            user = userRepository.findById(requestedId)
+    public UserDTO getUserById(Long requestedId) {
+        User user = userRepository.findById(requestedId)
                     .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND.formatted(requestedId)));
-            validateRequest(requesterEmail, user);
-        }
+        return convertToUserDTO(user);
+    }
+
+    @Override
+    public UserDTO getUserByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND.formatted(email)));
         return convertToUserDTO(user);
     }
 

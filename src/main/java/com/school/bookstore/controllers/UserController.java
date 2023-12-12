@@ -29,12 +29,17 @@ public class UserController {
         return ResponseEntity.ok(userService.createUser(userDTO));
     }
 
-    @Secured({"ROLE_USER", "ROLE_STAFF"})
+    @Secured({"ROLE_STAFF"})
     @GetMapping("/{customerId}")
-    public ResponseEntity<UserDTO> getCustomerById(
-            @RequestHeader(name = "Authorization") String authorizationHeader,
-            @PathVariable(required = false) Long customerId) {
-        return ResponseEntity.ok(userService.getUserById(jwtService.extractUserName(authorizationHeader.substring(7)), customerId));
+    public ResponseEntity<UserDTO> getCustomerById(Long customerId) {
+        return ResponseEntity.ok(userService.getUserById(customerId));
+    }
+
+    @Secured({"ROLE_USER"})
+    @GetMapping("my-account")
+    public ResponseEntity<UserDTO> getPersonalAccountInformation(
+            @RequestHeader(name = "Authorization") String authorizationHeader) {
+        return ResponseEntity.ok(userService.getUserByEmail(jwtService.extractUserName(authorizationHeader.substring(7))));
     }
 
     @Secured("ROLE_STAFF")

@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,6 +29,7 @@ public class GenreTagController {
         return ResponseEntity.ok(genreTagService.getTagById(genreId));
     }
 
+    @Secured("ROLE_STAFF")
     @PutMapping("/{genreId}")
     public ResponseEntity<GenreTagDTO> updateGenreTag(
             @PathVariable Long genreId,
