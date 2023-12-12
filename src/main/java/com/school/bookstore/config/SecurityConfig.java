@@ -61,7 +61,8 @@ public class SecurityConfig {
                                 "/api/authors/{id}",
                                 "/api/books",
                                 "/api/books/{id}",
-                                "/api/genre-tags")
+                                "/api/genre-tags",
+                                "/api/genre-tags/{id}")
                         .permitAll()
                         .requestMatchers(HttpMethod.POST,
                                 "/api/authentication",

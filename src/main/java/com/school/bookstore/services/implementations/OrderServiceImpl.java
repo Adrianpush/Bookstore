@@ -68,17 +68,16 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderDTO> getAllOrdersByCustomer(String email, Long customerId) {
+    public List<OrderDTO> getAllOrdersByCustomer(String requesterEmail, Long requestedCustomerId) {
         User user;
-        if (customerId == null) {
-            user = userRepository.findByEmail(email)
-                    .orElseThrow(() -> new UserNotFoundException(CUSTOMER_NOT_FOUND.formatted(email)));
+        if (requestedCustomerId == null) {
+            user = userRepository.findByEmail(requesterEmail)
+                    .orElseThrow(() -> new UserNotFoundException(CUSTOMER_NOT_FOUND.formatted(requesterEmail)));
         } else {
-            user = userRepository.findById(customerId)
+            user = userRepository.findById(requestedCustomerId)
                     .orElseThrow(() -> new UserNotFoundException("Customer not found"));
-            validateRequest(email, user);
+            validateRequest(requesterEmail, user);
         }
-
         return orderRepository.findAllByUser(user).stream()
                 .map(this::convertToOrderDTO)
                 .toList();
@@ -114,7 +113,6 @@ public class OrderServiceImpl implements OrderService {
                 .map(OrderItem::getBook)
                 .distinct()
                 .forEach(book -> booksTitles.add(book.getTitle()));
-
         return booksTitles;
     }
 
@@ -170,8 +168,9 @@ public class OrderServiceImpl implements OrderService {
         emailService.sendOrderConfirmation(orderSummaryDTO);
     }
 
-    private void validateRequest(String email, User user) {
-        if (user.getRole() == Role.ROLE_USER && !user.getEmail().equals(email)) {
+    private void validateRequest(String requesterEmail, User requestedUser) {
+        User requester = userRepository.findByEmail(requesterEmail).get();
+        if (requester.getRole() == Role.ROLE_USER && !requestedUser.getEmail().equals(requesterEmail)) {
             throw new AuthentificationException("Not allowed to access this resource.");
         }
     }

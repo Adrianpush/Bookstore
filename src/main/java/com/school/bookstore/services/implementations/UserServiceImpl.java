@@ -119,8 +119,8 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private void validateRequest(String email, User user) {
-        if (user.getRole() == Role.ROLE_USER && !user.getEmail().equals(email)) {
+    private void validateRequest(String requesterEmail, User requestedUser) {
+        if (userRepository.findByEmail(requesterEmail).get().getRole() == Role.ROLE_USER && !requestedUser.getEmail().equals(requesterEmail)) {
             throw new AuthentificationException("Not allowed to access this resource.");
         }
     }
