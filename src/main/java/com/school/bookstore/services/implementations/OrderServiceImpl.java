@@ -3,7 +3,6 @@ package com.school.bookstore.services.implementations;
 import com.school.bookstore.exceptions.order.OrderNotFoundException;
 import com.school.bookstore.exceptions.users.AuthentificationException;
 import com.school.bookstore.exceptions.users.UserNotFoundException;
-import com.school.bookstore.models.dtos.EmailDTO;
 import com.school.bookstore.models.dtos.OrderDTO;
 import com.school.bookstore.models.dtos.OrderItemDTO;
 import com.school.bookstore.models.dtos.OrderSummaryDTO;
@@ -33,6 +32,8 @@ import java.util.List;
 @Slf4j
 public class OrderServiceImpl implements OrderService {
 
+    private static final String CUSTOMER_NOT_FOUND = "Customer %s not found.";
+    private static final String ORDER_NOT_FOUND = "Order %s not found.";
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final OrderItemService orderItemService;
@@ -42,7 +43,7 @@ public class OrderServiceImpl implements OrderService {
     public OrderDTO createOrder(String customerEmail, OrderDTO shoppingCart) {
 
         User user = userRepository.findByEmail(customerEmail)
-                .orElseThrow(() -> new UserNotFoundException("Customer not found"));
+                .orElseThrow(() -> new UserNotFoundException(CUSTOMER_NOT_FOUND.formatted(customerEmail)));
         validateOrder(shoppingCart);
 
         Order order = getOrder(shoppingCart, user);
@@ -54,7 +55,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDTO getOrderById(String email, Long orderId) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new OrderNotFoundException("Order not found"));
+                .orElseThrow(() -> new OrderNotFoundException(ORDER_NOT_FOUND.formatted(orderId)));
         User user = order.getUser();
         validateRequest(email, user);
         return convertToOrderDTO(order);
@@ -72,7 +73,7 @@ public class OrderServiceImpl implements OrderService {
         User user;
         if (customerId == null) {
             user = userRepository.findByEmail(email)
-                    .orElseThrow(() -> new UserNotFoundException("Customer not found"));
+                    .orElseThrow(() -> new UserNotFoundException(CUSTOMER_NOT_FOUND.formatted(email)));
         } else {
             user = userRepository.findById(customerId)
                     .orElseThrow(() -> new UserNotFoundException("Customer not found"));
@@ -87,7 +88,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDTO markOrderCompleted(Long orderId) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new OrderNotFoundException("Order not found"));
+                .orElseThrow(() -> new OrderNotFoundException(ORDER_NOT_FOUND.formatted(orderId)));
         order.setOrderStatus(OrderStatus.COMPLETED);
         order = orderRepository.save(order);
         return convertToOrderDTO(order);
@@ -96,7 +97,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void cancelOrder(Long orderId) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new OrderNotFoundException("Order not found"));
+                .orElseThrow(() -> new OrderNotFoundException(ORDER_NOT_FOUND.formatted(orderId)));
         order.getOrderItems().forEach(orderItemService::cancelOrderItem);
         order.setOrderStatus(OrderStatus.CANCELED);
         orderRepository.save(order);
@@ -105,7 +106,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<String> getBooksBought(String requesterEmail) {
         User user = userRepository.findByEmail(requesterEmail)
-                .orElseThrow(() -> new UserNotFoundException("Customer not found"));
+                .orElseThrow(() -> new UserNotFoundException(CUSTOMER_NOT_FOUND.formatted(requesterEmail)));
 
         List<String> booksTitles = new ArrayList<>();
         orderRepository.findAllByUser(user).stream()

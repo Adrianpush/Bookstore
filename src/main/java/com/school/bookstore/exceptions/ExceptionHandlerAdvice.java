@@ -12,6 +12,7 @@ import com.school.bookstore.exceptions.users.UserNotFoundException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -32,6 +33,8 @@ import static org.springframework.http.HttpStatus.*;
 @Slf4j
 public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
 
+    private static final String MESSAGE = "message";
+    @Autowired
     ObjectMapper objectMapper;
 
     public ExceptionHandlerAdvice(ObjectMapper objectMapper) {
@@ -41,66 +44,66 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
     @ExceptionHandler(UserCreateException.class)
     public ResponseEntity<String> userCreateException(UserCreateException userCreateException) {
         return new ResponseEntity<>(objectToString(
-                Map.of("message", userCreateException.getMessage())), BAD_REQUEST);
+                Map.of(MESSAGE, userCreateException.getMessage())), BAD_REQUEST);
     }
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<String> userNotFoundException(UserNotFoundException userNotFoundException) {
         return new ResponseEntity<>(objectToString(
-                Map.of("message", userNotFoundException.getMessage())), NOT_FOUND);
+                Map.of(MESSAGE, userNotFoundException.getMessage())), NOT_FOUND);
     }
 
     @ExceptionHandler(BookCreateException.class)
     public ResponseEntity<String> bookCreateException(BookCreateException bookCreateException) {
         return new ResponseEntity<>(objectToString(
-                Map.of("message", bookCreateException.getMessage())), BAD_REQUEST);
+                Map.of(MESSAGE, bookCreateException.getMessage())), BAD_REQUEST);
     }
 
     @ExceptionHandler(BookDeleteException.class)
     public ResponseEntity<String> bookDeleteException(BookDeleteException bookDeleteException) {
         return new ResponseEntity<>(objectToString(
-                Map.of("message", bookDeleteException.getMessage())), CONFLICT);
+                Map.of(MESSAGE, bookDeleteException.getMessage())), CONFLICT);
     }
 
     @ExceptionHandler(BookNotFoundException.class)
     public ResponseEntity<String> bookNotFoundException(BookNotFoundException bookNotFoundException) {
         return new ResponseEntity<>(objectToString(
-                Map.of("message", bookNotFoundException.getMessage())), NOT_FOUND);
+                Map.of(MESSAGE, bookNotFoundException.getMessage())), NOT_FOUND);
     }
 
     @ExceptionHandler(ImageUploadException.class)
     public ResponseEntity<String> imageUploadException(ImageUploadException imageUploadException) {
-        return new ResponseEntity<>(objectToString(Map.of("message", imageUploadException)), SERVICE_UNAVAILABLE);
+        return new ResponseEntity<>(objectToString(Map.of(MESSAGE, imageUploadException)), SERVICE_UNAVAILABLE);
     }
 
     @ExceptionHandler(AuthorNotFoundException.class)
     public ResponseEntity<String> authorNotFoundException(AuthorNotFoundException authorNotFoundException) {
-        return new ResponseEntity<>(objectToString(Map.of("message", authorNotFoundException)), NOT_FOUND);
+        return new ResponseEntity<>(objectToString(Map.of(MESSAGE, authorNotFoundException)), NOT_FOUND);
     }
 
     @ExceptionHandler(GenreTagNotFoundException.class)
     public ResponseEntity<String> genreTagNotFoundException(GenreTagNotFoundException genreTagNotFoundException) {
-        return new ResponseEntity<>(objectToString(Map.of("message", genreTagNotFoundException)), NOT_FOUND);
+        return new ResponseEntity<>(objectToString(Map.of(MESSAGE, genreTagNotFoundException)), NOT_FOUND);
     }
 
     @ExceptionHandler(OrderCreateException.class)
     public ResponseEntity<String> orderCreateException(OrderCreateException orderCreateException) {
-        return new ResponseEntity<>(objectToString(Map.of("message", orderCreateException)), BAD_REQUEST);
+        return new ResponseEntity<>(objectToString(Map.of(MESSAGE, orderCreateException)), BAD_REQUEST);
     }
 
     @ExceptionHandler(OrderNotFoundException.class)
     public ResponseEntity<String> orderNotFoundException(OrderCreateException orderNotFoundException) {
-        return new ResponseEntity<>(objectToString(Map.of("message", orderNotFoundException)), NOT_FOUND);
+        return new ResponseEntity<>(objectToString(Map.of(MESSAGE, orderNotFoundException)), NOT_FOUND);
     }
 
     @ExceptionHandler(AuthentificationException.class)
     public ResponseEntity<String> authenticationException(AuthentificationException authentificationException) {
-        return new ResponseEntity<>(objectToString(Map.of("message", authentificationException)), FORBIDDEN);
+        return new ResponseEntity<>(objectToString(Map.of(MESSAGE, authentificationException)), FORBIDDEN);
     }
 
     @ExceptionHandler(RecommendationException.class)
     public ResponseEntity<String> recommendationException(RecommendationException recommendationException) {
-        return new ResponseEntity<>(objectToString(Map.of("message", recommendationException)), SERVICE_UNAVAILABLE);
+        return new ResponseEntity<>(objectToString(Map.of(MESSAGE, recommendationException)), SERVICE_UNAVAILABLE);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)

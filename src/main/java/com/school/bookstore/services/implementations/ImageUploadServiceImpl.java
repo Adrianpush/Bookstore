@@ -17,12 +17,13 @@ import java.util.Objects;
 @Service
 public class ImageUploadServiceImpl implements ImageUploadService {
 
+    private static final  String FAILED_UPLOAD = "Unable to upload file";
     private final String bucketName;
     private final String projectId;
     private final String apiKey;
     private final OkHttpClient client;
     private final String imageBaseUrl;
-    private final static String FAILED_UPLOAD = "Unable to upload file";
+
 
     public ImageUploadServiceImpl(@Value("${supabase.apikey}") String apiKey, @Value("${image.urlBase}") String imageBaseUrl) {
         this.imageBaseUrl = imageBaseUrl;

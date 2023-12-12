@@ -22,6 +22,7 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
 
+    private static final String USER_NOT_FOUND = "User %s not found.";
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
@@ -50,10 +51,10 @@ public class UserServiceImpl implements UserService {
         User user;
         if (requestedId == null) {
             user = userRepository.findByEmail(requesterEmail)
-                    .orElseThrow(() -> new UsernameNotFoundException("User with id " + requestedId + " not found"));
+                    .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND.formatted(requesterEmail)));
         } else {
             user = userRepository.findById(requestedId)
-                    .orElseThrow(() -> new UsernameNotFoundException("User with id " + requestedId + " not found"));
+                    .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND.formatted(requestedId)));
             validateRequest(requesterEmail, user);
         }
 
@@ -68,10 +69,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(String requesterEmail, Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new UsernameNotFoundException("User with id " + id + " not found"));
-        validateRequest(requesterEmail, user);
+    public void deleteUser(String requesterEmail, Long requestedId) {
+        User user;
+        if (requestedId == null) {
+            user = userRepository.findByEmail(requesterEmail)
+                    .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND.formatted(requesterEmail)));
+        } else {
+            user = userRepository.findById(requestedId)
+                    .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND.formatted(requestedId)));
+            validateRequest(requesterEmail, user);
+        }
 
         User anon = User.builder()
                 .id(user.getId())
@@ -89,7 +96,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDetailsService userDetailsService() {
         return username -> userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND.formatted("")));
     }
 
     @Override
