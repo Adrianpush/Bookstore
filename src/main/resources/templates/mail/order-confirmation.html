@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Confirmation - PageFlip Bookstore</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        div {
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #007bff;
+        }
+
+        p {
+            font-size: 18px;
+            line-height: 1.5;
+            color: #555;
+        }
+
+        .book-details {
+            margin-top: 20px;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <h1>Order Confirmation for <span th:text="${userName}"></span></h1>
+
+    <div th:each="book : ${books}" class="book-details">
+        <p><strong>Book Title:</strong> <span th:text="${book}"></span></p>
+    </div>
+
+    <p>Your order has been confirmed. Thank you for choosing PageFlip Bookstore!</p>
+    <p>Happy reading!</p>
+</div>
+
+</body>
+</html>

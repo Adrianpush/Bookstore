@@ -6,6 +6,7 @@ import com.school.bookstore.models.dtos.UserDTO;
 import com.school.bookstore.models.entities.User;
 import com.school.bookstore.models.enums.Role;
 import com.school.bookstore.repositories.UserRepository;
+import com.school.bookstore.services.interfaces.EmailService;
 import com.school.bookstore.services.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
     @Override
     public UserDTO createUser(UserDTO userDTO) {
@@ -38,7 +40,8 @@ public class UserServiceImpl implements UserService {
                 .build();
 
         user = save(user);
-        log.info(String.valueOf(user.getId()));
+        emailService.sendWelcomeEmail(user.getFullName(), user.getEmail());
+
         return convertToUserDTO(user);
     }
 

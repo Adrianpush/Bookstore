@@ -6,6 +6,7 @@ import com.school.bookstore.exceptions.users.UserNotFoundException;
 import com.school.bookstore.models.dtos.EmailDTO;
 import com.school.bookstore.models.dtos.OrderDTO;
 import com.school.bookstore.models.dtos.OrderItemDTO;
+import com.school.bookstore.models.dtos.OrderSummaryDTO;
 import com.school.bookstore.models.entities.Book;
 import com.school.bookstore.models.entities.Order;
 import com.school.bookstore.models.entities.OrderItem;
@@ -49,6 +50,8 @@ public class OrderServiceImpl implements OrderService {
         order.setCreatedAt(LocalDateTime.now());
         order.setOrderStatus(OrderStatus.IN_PROGRESS);
         order = orderRepository.save(order);
+
+        sendOrderConfirmation(user, order);
 
         return convertToOrderDTO(order);
     }
@@ -148,6 +151,17 @@ public class OrderServiceImpl implements OrderService {
                 orderItemDTO -> orderItems.add(orderItemService.createOrderItem(orderItemDTO, order))
         );
         return orderItems;
+    }
+
+    private void sendOrderConfirmation(User user, Order order) {
+        OrderSummaryDTO orderSummaryDTO = OrderSummaryDTO.builder()
+                .recipientName(user.getFullName())
+                .recipientEmail(user.getEmail())
+                .books(order.getOrderItems().stream()
+                        .map(orderItem -> orderItem.getBook().getTitle() + " x" + orderItem.getQuantity())
+                        .toList())
+                .build();
+        emailService.sendOrderConfirmation(orderSummaryDTO);
     }
 
     private void validateRequest(String email, User user) {
