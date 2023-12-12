@@ -20,6 +20,7 @@ import com.school.bookstore.services.interfaces.OrderItemService;
 import com.school.bookstore.services.interfaces.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -44,13 +45,7 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new UserNotFoundException("Customer not found"));
         validateOrder(shoppingCart);
 
-        Order order = new Order();
-        order.setOrderItems(createOrderItems(shoppingCart.getOrderItems(), order));
-        order.setUser(user);
-        order.setCreatedAt(LocalDateTime.now());
-        order.setOrderStatus(OrderStatus.IN_PROGRESS);
-        order = orderRepository.save(order);
-
+        Order order = getOrder(shoppingCart, user);
         sendOrderConfirmation(user, order);
 
         return convertToOrderDTO(order);
@@ -126,6 +121,17 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public boolean isBookPresentInOrders(Book book) {
         return orderRepository.existsBookInOrderItems(book);
+    }
+
+    @NotNull
+    private Order getOrder(OrderDTO shoppingCart, User user) {
+        Order order = new Order();
+        order.setOrderItems(createOrderItems(shoppingCart.getOrderItems(), order));
+        order.setUser(user);
+        order.setCreatedAt(LocalDateTime.now());
+        order.setOrderStatus(OrderStatus.IN_PROGRESS);
+        order = orderRepository.save(order);
+        return order;
     }
 
     private OrderDTO convertToOrderDTO(Order order) {
