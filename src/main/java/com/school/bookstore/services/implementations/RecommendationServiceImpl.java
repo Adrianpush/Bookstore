@@ -25,11 +25,9 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class RecommendationServiceImpl implements RecommendationService {
 
-
     private final ObjectMapper objectMapper;
     private final OrderService orderService;
     private final BookService bookService;
-
 
     @Value("${openai.api.key}")
     private String openaiApiKey;
@@ -96,6 +94,3 @@ public class RecommendationServiceImpl implements RecommendationService {
         return recommendedBooks;
     }
 }
-
-
-

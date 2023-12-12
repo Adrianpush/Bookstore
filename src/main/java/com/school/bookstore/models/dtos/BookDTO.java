@@ -47,7 +47,8 @@ public class BookDTO {
     @Min(0)
     private double priceBeforeDiscount;
 
-    @Min(0) @Max(99)
+    @Min(0)
+    @Max(99)
     private int discountPercent;
 
     @Min(0)

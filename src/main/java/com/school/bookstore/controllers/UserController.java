@@ -43,7 +43,7 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    @Secured({ "ROLE_USER", "ROLE_STAFF" })
+    @Secured({"ROLE_USER", "ROLE_STAFF"})
     @DeleteMapping("/{customerId}")
     public HttpStatus deleteCustomer(@RequestHeader(name = "Authorization") String authorizationHeader,
                                      @PathVariable Long customerId) {

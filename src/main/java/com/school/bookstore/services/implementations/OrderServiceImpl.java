@@ -41,7 +41,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDTO createOrder(String customerEmail, OrderDTO shoppingCart) {
-
         User user = userRepository.findByEmail(customerEmail)
                 .orElseThrow(() -> new UserNotFoundException(CUSTOMER_NOT_FOUND.formatted(customerEmail)));
         validateOrder(shoppingCart);

@@ -55,7 +55,7 @@ public class OrderController {
     @Secured({"ROLE_STAFF"})
     @PatchMapping("/{orderId}")
     public ResponseEntity<OrderDTO> markOrderComplete(@PathVariable Long orderId) {
-            return ResponseEntity.ok(orderService.markOrderCompleted(orderId));
+        return ResponseEntity.ok(orderService.markOrderCompleted(orderId));
     }
 
     @Secured({"ROLE_USER"})

@@ -16,7 +16,6 @@ public class ChatRequestDTO implements Serializable {
     private String model;
     private List<MessageDTO> messages;
 
-
     public ChatRequestDTO(String model, String prompt) {
         this.model = model;
         this.messages = new ArrayList<>();

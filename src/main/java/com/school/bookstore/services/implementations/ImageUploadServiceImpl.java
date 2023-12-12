@@ -17,13 +17,12 @@ import java.util.Objects;
 @Service
 public class ImageUploadServiceImpl implements ImageUploadService {
 
-    private static final  String FAILED_UPLOAD = "Unable to upload file";
+    private static final String FAILED_UPLOAD = "Unable to upload file";
     private final String bucketName;
     private final String projectId;
     private final String apiKey;
     private final OkHttpClient client;
     private final String imageBaseUrl;
-
 
     public ImageUploadServiceImpl(@Value("${supabase.apikey}") String apiKey, @Value("${image.urlBase}") String imageBaseUrl) {
         this.imageBaseUrl = imageBaseUrl;
@@ -84,7 +83,7 @@ public class ImageUploadServiceImpl implements ImageUploadService {
                     .setType(MultipartBody.FORM)
                     .addFormDataPart("file", fileName,
                             RequestBody.create(multipartFile.getBytes(),
-                                    MediaType.parse(Objects.requireNonNull(multipartFile.getContentType()))                            ))
+                                    MediaType.parse(Objects.requireNonNull(multipartFile.getContentType()))))
                     .build();
         } catch (IOException e) {
             throw new ImageUploadException(FAILED_UPLOAD);

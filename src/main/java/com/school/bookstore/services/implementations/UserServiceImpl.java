@@ -30,7 +30,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO createUser(UserDTO userDTO) {
         checkForDuplicate(userDTO.getEmail());
-
         User user = User
                 .builder()
                 .email(userDTO.getEmail())
@@ -42,7 +41,6 @@ public class UserServiceImpl implements UserService {
 
         user = save(user);
         emailService.sendWelcomeEmail(user.getFullName(), user.getEmail());
-
         return convertToUserDTO(user);
     }
 
@@ -57,7 +55,6 @@ public class UserServiceImpl implements UserService {
                     .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND.formatted(requestedId)));
             validateRequest(requesterEmail, user);
         }
-
         return convertToUserDTO(user);
     }
 
@@ -127,4 +124,3 @@ public class UserServiceImpl implements UserService {
         }
     }
 }
-
