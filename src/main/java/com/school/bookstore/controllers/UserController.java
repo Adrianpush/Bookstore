@@ -35,7 +35,7 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserById(customerId));
     }
 
-    @Secured({"ROLE_USER"})
+    @Secured({"ROLE_USER", "ROLE_STAFF"})
     @GetMapping("my-account")
     public ResponseEntity<UserDTO> getPersonalAccountInformation(
             @RequestHeader(name = "Authorization") String authorizationHeader) {
