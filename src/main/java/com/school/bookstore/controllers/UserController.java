@@ -36,7 +36,7 @@ public class UserController {
     }
 
     @Secured({"ROLE_USER", "ROLE_STAFF"})
-    @GetMapping("my-account")
+    @GetMapping("/my-account")
     public ResponseEntity<UserDTO> getPersonalAccountInformation(
             @RequestHeader(name = "Authorization") String authorizationHeader) {
         return ResponseEntity.ok(userService.getUserByEmail(jwtService.extractUserName(authorizationHeader.substring(7))));
