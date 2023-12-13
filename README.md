@@ -1,6 +1,6 @@
 Page Flip Bookstore (Backend)
 
-Page Flip Bookstore is a backend-only Spring Boot application for an online bookstore. It features secure authentication, RESTful API endpoints, PostgreSQL database management with JPA and Hibernate, email notifications, third-party image hosting, and OpenAI integration for personalized book recommendations.
+Page Flip Bookstore is a backend-only Spring Boot application for an online bookstore. It features role based authentication, RESTful API endpoints, PostgreSQL database management with JPA and Hibernate, email notifications, third-party image hosting, and OpenAI integration for personalized book recommendations.
 
 Features
 
