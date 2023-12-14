@@ -93,9 +93,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void cancelOrder(Long orderId) {
+    public void cancelOrder(String requesterEmail, Long orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException(ORDER_NOT_FOUND.formatted(orderId)));
+        User orderOwner = order.getUser();
+        if (!orderOwner.getEmail().equals(requesterEmail)) {
+            throw new AuthentificationException("Not authorized for operation");
+        }
         order.getOrderItems().forEach(orderItemService::cancelOrderItem);
         order.setOrderStatus(OrderStatus.CANCELED);
         orderRepository.save(order);

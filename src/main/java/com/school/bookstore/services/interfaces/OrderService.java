@@ -17,7 +17,7 @@ public interface OrderService {
 
     OrderDTO markOrderCompleted(Long orderId);
 
-    void cancelOrder(Long orderId);
+    void cancelOrder(String requesterEmail, Long orderId);
 
     List<String> getBooksBought(String requesterEmail);
 

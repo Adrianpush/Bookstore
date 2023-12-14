@@ -60,8 +60,10 @@ public class OrderController {
 
     @Secured({"ROLE_USER"})
     @DeleteMapping("/{orderId}")
-    public HttpStatus cancelOrder(@PathVariable Long orderId) {
-        orderService.cancelOrder(orderId);
+    public HttpStatus cancelOrder(
+            @RequestHeader(name = "Authorization") String authorizationHeader,
+            @PathVariable Long orderId) {
+        orderService.cancelOrder(jwtService.extractUserName(authorizationHeader.substring(7)), orderId);
         return HttpStatus.NO_CONTENT;
     }
 }
