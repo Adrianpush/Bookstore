@@ -3,6 +3,7 @@ package com.school.bookstore.services.implementations;
 import com.school.bookstore.exceptions.book.BookCreateException;
 import com.school.bookstore.exceptions.book.BookDeleteException;
 import com.school.bookstore.exceptions.book.BookNotFoundException;
+import com.school.bookstore.exceptions.book.InvalidLanguageException;
 import com.school.bookstore.models.dtos.BookDTO;
 import com.school.bookstore.models.entities.Author;
 import com.school.bookstore.models.entities.Book;
@@ -22,7 +23,7 @@ import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
-public class BookService implements com.school.bookstore.services.interfaces.BookService {
+public class BookServiceImpl implements com.school.bookstore.services.interfaces.BookService {
 
     public static final String DEFAULT_IMAGE_LINK = "https://dkckcusqogzbwetnizwe.supabase.co" +
             "/storage/v1/object/public/books/default-book-cover.jpg";
@@ -51,16 +52,23 @@ public class BookService implements com.school.bookstore.services.interfaces.Boo
 
     @Override
     public List<BookDTO> getBooks(String searchString, String genre, String language) {
-        Language lang;
-        try {
-            lang = Language.valueOf(language.toUpperCase());
-        } catch (NullPointerException | IllegalArgumentException exception) {
-            lang = null;
-        }
+        Language lang = getLanguage(language).orElse(null);
         return bookRepository.findBooksByTitleOrAuthorNameAndGenreAndLanguage(searchString, genre, lang)
                 .stream()
                 .map(this::convertToBookDTO)
                 .toList();
+    }
+
+    private Optional<Language> getLanguage(String inputString) {
+        Language language = null;
+        if (inputString != null) {
+            try {
+                language = Language.valueOf(inputString.toUpperCase());
+            } catch (IllegalArgumentException exception) {
+                throw new InvalidLanguageException("Invalid argument for language");
+            }
+        }
+        return Optional.ofNullable(language);
     }
 
     @Override

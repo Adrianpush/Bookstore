@@ -5,9 +5,7 @@ import com.school.bookstore.models.entities.Author;
 import com.school.bookstore.models.entities.Book;
 import com.school.bookstore.models.entities.GenreTag;
 import com.school.bookstore.repositories.BookRepository;
-import com.school.bookstore.services.implementations.BookService;
-import com.school.bookstore.services.interfaces.AuthorService;
-import com.school.bookstore.services.interfaces.GenreTagService;
+import com.school.bookstore.services.implementations.BookServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,18 +15,18 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Set;
 
-import static com.school.bookstore.services.implementations.BookService.DEFAULT_IMAGE_LINK;
+import static com.school.bookstore.services.implementations.BookServiceImpl.DEFAULT_IMAGE_LINK;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-public class BookServiceTest {
+public class BookServiceImplTest {
 
     @Mock
     private BookRepository bookRepository;
     @InjectMocks
-    private BookService bookService;
+    private BookServiceImpl bookServiceImpl;
 
     @Test
     void createBookShouldPass() {
@@ -41,7 +39,7 @@ public class BookServiceTest {
         when(bookRepository.save(any(Book.class))).thenReturn(book);
 
         //Act
-        BookDTO result = bookService.createBook(bookDTO);
+        BookDTO result = bookServiceImpl.createBook(bookDTO);
 
         //Then
         assertNotNull(bookDTO);

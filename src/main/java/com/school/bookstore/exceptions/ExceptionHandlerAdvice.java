@@ -71,6 +71,17 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
                 Map.of(MESSAGE, bookNotFoundException.getMessage())), NOT_FOUND);
     }
 
+    @ExceptionHandler(InvalidLanguageException.class)
+    public ResponseEntity<String> invalidLanguageException(InvalidLanguageException invalidLanguageException) {
+        return new ResponseEntity<>(objectToString(
+                Map.of(MESSAGE, invalidLanguageException.getMessage())), BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidImageException.class)
+    public ResponseEntity<String> invalidImageException(InvalidImageException invalidImageException) {
+        return new ResponseEntity<>(objectToString(Map.of(MESSAGE, invalidImageException)), BAD_REQUEST);
+    }
+
     @ExceptionHandler(ImageUploadException.class)
     public ResponseEntity<String> imageUploadException(ImageUploadException imageUploadException) {
         return new ResponseEntity<>(objectToString(Map.of(MESSAGE, imageUploadException)), SERVICE_UNAVAILABLE);
