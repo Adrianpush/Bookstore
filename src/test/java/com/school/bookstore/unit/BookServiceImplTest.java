@@ -5,7 +5,7 @@ import com.school.bookstore.models.entities.Author;
 import com.school.bookstore.models.entities.Book;
 import com.school.bookstore.models.entities.GenreTag;
 import com.school.bookstore.repositories.BookRepository;
-import com.school.bookstore.services.implementations.BookServiceImpl;
+import com.school.bookstore.services.interfaces.BookService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,7 +26,7 @@ public class BookServiceImplTest {
     @Mock
     private BookRepository bookRepository;
     @InjectMocks
-    private BookServiceImpl bookServiceImpl;
+    private BookService bookService;
 
     @Test
     void createBookShouldPass() {
@@ -39,7 +39,7 @@ public class BookServiceImplTest {
         when(bookRepository.save(any(Book.class))).thenReturn(book);
 
         //Act
-        BookDTO result = bookServiceImpl.createBook(bookDTO);
+        BookDTO result = bookService.createBook(bookDTO);
 
         //Then
         assertNotNull(bookDTO);
