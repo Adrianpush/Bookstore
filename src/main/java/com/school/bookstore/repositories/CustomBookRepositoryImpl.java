@@ -39,6 +39,7 @@ public class CustomBookRepositoryImpl implements CustomBookRepository {
             Join<Book, Author> authorJoin = bookRoot.join("authors", JoinType.INNER);
             Predicate authorPredicate = criteriaBuilder.like(
                     criteriaBuilder.lower(authorJoin.get("fullName")), "%" + searchString.toLowerCase() + "%");
+
             predicates.add(criteriaBuilder.or(titlePredicate, authorPredicate));
         }
 

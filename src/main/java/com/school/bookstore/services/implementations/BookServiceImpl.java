@@ -13,6 +13,8 @@ import com.school.bookstore.repositories.BookRepository;
 import com.school.bookstore.services.interfaces.*;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,9 +27,10 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class BookServiceImpl implements com.school.bookstore.services.interfaces.BookService {
 
-    public static final String DEFAULT_IMAGE_LINK = "https://dkckcusqogzbwetnizwe.supabase.co" +
-            "/storage/v1/object/public/books/default-book-cover.jpg";
-    private static final String BOOK_NOT_FOUND_MESSAGE = "Database doesn't contain any book with id %s.";
+
+    @Value("${default.image}")
+    private String DEFAULT_IMAGE_LINK;
+    private String BOOK_NOT_FOUND_MESSAGE = "Database doesn't contain any book with id %s.";
     private final BookRepository bookRepository;
     private final AuthorService authorService;
     private final GenreTagService genreTagService;
