@@ -82,9 +82,9 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(objectToString(Map.of(MESSAGE, invalidImageException)), BAD_REQUEST);
     }
 
-    @ExceptionHandler(ImageUploadException.class)
-    public ResponseEntity<String> imageUploadException(ImageUploadException imageUploadException) {
-        return new ResponseEntity<>(objectToString(Map.of(MESSAGE, imageUploadException)), SERVICE_UNAVAILABLE);
+    @ExceptionHandler(ImageStorageException.class)
+    public ResponseEntity<String> imageUploadException(ImageStorageException imageStorageException) {
+        return new ResponseEntity<>(objectToString(Map.of(MESSAGE, imageStorageException)), SERVICE_UNAVAILABLE);
     }
 
     @ExceptionHandler(AuthorNotFoundException.class)

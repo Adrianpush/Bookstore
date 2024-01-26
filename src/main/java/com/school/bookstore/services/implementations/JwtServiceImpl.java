@@ -20,10 +20,10 @@ import java.util.function.Function;
 public class JwtServiceImpl implements JwtService {
 
     @Value("${token.secret.key}")
-    String jwtSecretKey;
+    private String jwtSecretKey;
 
     @Value("${token.expiration}")
-    Long jwtExpirationMs;
+    private Long jwtExpirationMs;
 
     @Override
     public String extractUserName(String token) {

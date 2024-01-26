@@ -1,8 +1,8 @@
 package com.school.bookstore.services.implementations;
 
-import com.school.bookstore.exceptions.book.ImageUploadException;
+import com.school.bookstore.exceptions.book.ImageStorageException;
 import com.school.bookstore.exceptions.book.InvalidImageException;
-import com.school.bookstore.services.interfaces.ImageUploadService;
+import com.school.bookstore.services.interfaces.ImageStorageService;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,7 +14,7 @@ import java.util.Objects;
 
 @Slf4j
 @Service
-public class ImageUploadServiceImpl implements ImageUploadService {
+public class ImageStorageServiceImpl implements ImageStorageService {
 
     private static final String FAILED_UPLOAD = "Unable to upload file";
     private final String bucketName;
@@ -23,7 +23,7 @@ public class ImageUploadServiceImpl implements ImageUploadService {
     private final OkHttpClient client;
     private final String imageBaseUrl;
 
-    public ImageUploadServiceImpl(@Value("${supabase.apikey}") String apiKey, @Value("${image.urlBase}") String imageBaseUrl) {
+    public ImageStorageServiceImpl(@Value("${supabase.apikey}") String apiKey, @Value("${image.urlBase}") String imageBaseUrl) {
         this.imageBaseUrl = imageBaseUrl;
         this.client = new OkHttpClient();
         this.projectId = "dkckcusqogzbwetnizwe";
@@ -44,7 +44,7 @@ public class ImageUploadServiceImpl implements ImageUploadService {
                                     MediaType.parse(Objects.requireNonNull(multipartFile.getContentType()))))
                     .build();
         } catch (IOException e) {
-            throw new ImageUploadException(FAILED_UPLOAD);
+            throw new ImageStorageException(FAILED_UPLOAD);
         }
 
         Request request = new Request.Builder()
@@ -55,7 +55,7 @@ public class ImageUploadServiceImpl implements ImageUploadService {
         try (Response response = client.newCall(request).execute()) {
             return imageBaseUrl.concat(fileName);
         } catch (IOException e) {
-            throw new ImageUploadException(FAILED_UPLOAD);
+            throw new ImageStorageException(FAILED_UPLOAD);
         }
     }
 
@@ -71,7 +71,7 @@ public class ImageUploadServiceImpl implements ImageUploadService {
                                     MediaType.parse(Objects.requireNonNull(multipartFile.getContentType()))))
                     .build();
         } catch (IOException e) {
-            throw new ImageUploadException(FAILED_UPLOAD);
+            throw new ImageStorageException(FAILED_UPLOAD);
         }
 
         Request request = new Request.Builder()
@@ -83,7 +83,21 @@ public class ImageUploadServiceImpl implements ImageUploadService {
         try (Response response = client.newCall(request).execute()) {
             return imageBaseUrl.concat(fileName);
         } catch (IOException e) {
-            throw new ImageUploadException(FAILED_UPLOAD);
+            throw new ImageStorageException(FAILED_UPLOAD);
+        }
+    }
+
+    @Override
+    public boolean deleteImage(String imageLink) {
+        Request request = new Request.Builder()
+                .url(imageLink)
+                .addHeader("Authorization", "Bearer " + apiKey)
+                .delete()
+                .build();
+        try (Response response = client.newCall(request).execute()) {
+            return true;
+        } catch (IOException exception) {
+            throw new ImageStorageException("Unable to delete image");
         }
     }
 

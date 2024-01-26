@@ -25,7 +25,7 @@ public class BookDTO {
     private String title;
 
     @NotEmpty(message = "Author list must not be blank")
-    private List<String> authorNameList;
+    private List<AuthorDTO> authorDTOS;
 
     @NotEmpty(message = "Tag list must not be blank")
     private List<String> genreTagList;

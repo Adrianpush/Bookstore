@@ -70,7 +70,7 @@ public class EmailServiceImpl implements EmailService {
         } catch (MessagingException e) {
             log.error("Email was not sent to {}, because:  {}", emailDTO.getTo(), e.getMessage());
         }
-        javaMailSender.send(message);
+        //javaMailSender.send(message);
         log.info("Email to {}, was sent.", emailDTO.getTo());
     }
 }
