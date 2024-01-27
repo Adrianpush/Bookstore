@@ -114,9 +114,11 @@ public class BookServiceImpl implements com.school.bookstore.services.interfaces
         Set<GenreTag> genreTags = book.getGenreTagSet();
 
         bookRepository.delete(book);
-        imageStorageService.deleteImage(book.getImageLink());
         deleteAuthorsIfOrphan(authors);
         deleteGenreTagsIfOrphan(genreTags);
+        if (!book.getImageLink().equals(DEFAULT_IMAGE_LINK)) {
+            imageStorageService.deleteImageByBookId(book.getId());
+        }
     }
 
     @Override

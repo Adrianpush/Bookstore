@@ -8,5 +8,5 @@ public interface ImageStorageService {
 
     String updateImage(MultipartFile multipartFile, String fileName);
 
-    boolean deleteImage(String imageLink);
+    void deleteImageByBookId(Long bookId);
 }

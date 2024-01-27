@@ -88,14 +88,14 @@ public class ImageStorageServiceImpl implements ImageStorageService {
     }
 
     @Override
-    public boolean deleteImage(String imageLink) {
+    public void deleteImageByBookId(Long bookId) {
         Request request = new Request.Builder()
-                .url(imageLink)
+                .url(String.format("https://%s.supabase.co/storage/v1/object/%s/%s", projectId, bucketName, bookId.toString()))
                 .addHeader("Authorization", "Bearer " + apiKey)
                 .delete()
                 .build();
         try (Response response = client.newCall(request).execute()) {
-            return true;
+            log.info(response.toString());
         } catch (IOException exception) {
             throw new ImageStorageException("Unable to delete image");
         }
