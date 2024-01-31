@@ -11,5 +11,6 @@ public interface CustomBookRepository {
     List<Book> findBooksByTitleOrAuthorNameAndGenreAndLanguage(
             String searchString,
             String genre,
-            Language language);
+            Language language,
+            int pageNumber);
 }

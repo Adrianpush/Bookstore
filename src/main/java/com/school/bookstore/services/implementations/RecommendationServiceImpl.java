@@ -89,7 +89,7 @@ public class RecommendationServiceImpl implements RecommendationService {
         Set<BookDTO> recommendedBooks = new HashSet<>();
         for (String searchString : bookTitlesAndAuthors) {
             log.info(searchString);
-            recommendedBooks.addAll(bookService.getBooks(searchString.trim(), null, null));
+            recommendedBooks.addAll(bookService.getBooks(searchString.trim(), null, null, 1));
         }
         return recommendedBooks;
     }

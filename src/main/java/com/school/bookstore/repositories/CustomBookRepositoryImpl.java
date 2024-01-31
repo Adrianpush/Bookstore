@@ -22,14 +22,17 @@ public class CustomBookRepositoryImpl implements CustomBookRepository {
 
     @PersistenceContext
     private final EntityManager entityManager;
+    private final int ENTRIES_PER_PAGE = 5;
 
     @Override
-    public List<Book> findBooksByTitleOrAuthorNameAndGenreAndLanguage(String searchString, String genre, Language language) {
+    public List<Book> findBooksByTitleOrAuthorNameAndGenreAndLanguage(
+            String searchString, String genre, Language language, int pageNumber
+    ) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Book> criteriaQuery = criteriaBuilder.createQuery(Book.class);
 
         Root<Book> bookRoot = criteriaQuery.from(Book.class);
-        criteriaQuery.orderBy(criteriaBuilder.asc(bookRoot.get("updated_at")));
+        criteriaQuery.orderBy(criteriaBuilder.asc(bookRoot.get("updatedAt")));
         List<Predicate> predicates = new ArrayList<>();
 
         if (searchString != null && !searchString.isBlank()) {
@@ -53,9 +56,14 @@ public class CustomBookRepositoryImpl implements CustomBookRepository {
             predicates.add(criteriaBuilder.equal(bookRoot.get("language"), language));
         }
 
+        int firstResult = (pageNumber - 1) * ENTRIES_PER_PAGE;
+
         criteriaQuery.where(predicates.toArray(new Predicate[0]));
         TypedQuery<Book> typedQuery = entityManager.createQuery(criteriaQuery);
 
-        return typedQuery.getResultList();
+        return typedQuery
+                .setFirstResult(firstResult)
+                .setMaxResults(ENTRIES_PER_PAGE)
+                .getResultList();
     }
 }

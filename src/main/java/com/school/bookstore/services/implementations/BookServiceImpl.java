@@ -60,9 +60,9 @@ public class BookServiceImpl implements com.school.bookstore.services.interfaces
     }
 
     @Override
-    public List<BookDTO> getBooks(String searchString, String genre, String language) {
+    public List<BookDTO> getBooks(String searchString, String genre, String language, int pageNumber) {
         Language lang = getLanguage(language).orElse(null);
-        return bookRepository.findBooksByTitleOrAuthorNameAndGenreAndLanguage(searchString, genre, lang)
+        return bookRepository.findBooksByTitleOrAuthorNameAndGenreAndLanguage(searchString, genre, lang, pageNumber)
                 .stream()
                 .map(this::convertToBookDTO)
                 .toList();

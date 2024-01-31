@@ -41,8 +41,9 @@ public class BookController {
     public ResponseEntity<List<BookDTO>> getBooks(
             @RequestParam(required = false) String searchString,
             @RequestParam(required = false) String genre,
-            @RequestParam(required = false) String language) {
-        return ResponseEntity.ok(bookService.getBooks(searchString, genre, language));
+            @RequestParam(required = false) String language,
+            @RequestParam int pageNum) {
+        return ResponseEntity.ok(bookService.getBooks(searchString, genre, language, pageNum));
     }
 
     @Secured("ROLE_STAFF")

@@ -17,5 +17,5 @@ public interface BookService {
 
     void deleteBookById(Long bookId);
 
-    List<BookDTO> getBooks(String searchString, String genre, String language);
+    List<BookDTO> getBooks(String searchString, String genre, String language, int pageNumber);
 }
