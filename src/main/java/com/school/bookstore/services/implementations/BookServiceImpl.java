@@ -7,8 +7,8 @@ import com.school.bookstore.exceptions.book.InvalidLanguageException;
 import com.school.bookstore.models.dtos.AuthorDTO;
 import com.school.bookstore.models.dtos.BookDTO;
 import com.school.bookstore.models.entities.Author;
-import com.school.bookstore.models.entities.Book;
 import com.school.bookstore.models.entities.GenreTag;
+import com.school.bookstore.models.entities.Book;
 import com.school.bookstore.models.enums.Language;
 import com.school.bookstore.repositories.BookRepository;
 import com.school.bookstore.services.interfaces.AuthorService;
@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -45,6 +46,8 @@ public class BookServiceImpl implements com.school.bookstore.services.interfaces
         checkForDuplicate(bookDTO);
         Book book = convertToBookEntity(bookDTO);
         book.setImageLink(DEFAULT_IMAGE_LINK);
+        book.setCreatedAt(LocalDateTime.now());
+        book.setUpdatedAt(LocalDateTime.now());
         Book bookEntity = bookRepository.save(book);
         return convertToBookDTO(bookEntity);
     }
@@ -93,6 +96,7 @@ public class BookServiceImpl implements com.school.bookstore.services.interfaces
         Book updatedBook = convertToBookEntity(bookDTO);
         updatedBook.setId(bookToBeModified.getId());
         updatedBook.setImageLink(bookToBeModified.getImageLink());
+        updatedBook.setUpdatedAt(LocalDateTime.now());
         updatedBook = bookRepository.save(updatedBook);
 
         deleteAuthorsIfOrphan(authors);
@@ -172,6 +176,8 @@ public class BookServiceImpl implements com.school.bookstore.services.interfaces
                 .discountPercent(book.getDiscountPercent())
                 .copiesAvailable(book.getCopiesAvailable())
                 .imageLink(book.getImageLink())
+                .createdAt(book.getCreatedAt())
+                .updatedAt(book.getUpdatedAt())
                 .build();
     }
 

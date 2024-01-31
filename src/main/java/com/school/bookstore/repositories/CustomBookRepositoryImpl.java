@@ -28,8 +28,9 @@ public class CustomBookRepositoryImpl implements CustomBookRepository {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Book> criteriaQuery = criteriaBuilder.createQuery(Book.class);
 
-        List<Predicate> predicates = new ArrayList<>();
         Root<Book> bookRoot = criteriaQuery.from(Book.class);
+        criteriaQuery.orderBy(criteriaBuilder.asc(bookRoot.get("updated_at")));
+        List<Predicate> predicates = new ArrayList<>();
 
         if (searchString != null && !searchString.isBlank()) {
 

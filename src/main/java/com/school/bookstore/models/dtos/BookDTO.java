@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -56,4 +57,7 @@ public class BookDTO {
 
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private String imageLink;
+
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

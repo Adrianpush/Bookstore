@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Builder
@@ -66,6 +67,12 @@ public class Book implements Serializable {
 
     @Column(name = "copies_available")
     private int copiesAvailable;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     @Column(name = "image_link")
     private String imageLink;
